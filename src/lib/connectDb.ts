@@ -26,16 +26,13 @@ if (!cached) {
 
 async function connectDB() {
     if (cached.conn) {
-        console.log("herees sfdfdfdsf");
         return cached.conn;
     }
-    console.log("here");
     if (!cached.promise) {
         const opts = {
             bufferCommands: false,
         };
         console.log("connecting to db...");
-        console.log("hdjasdh", mongoose);
         cached.promise = mongoose
             .connect(DATABASE_URL, opts)
             .then((mongoose: any) => {
