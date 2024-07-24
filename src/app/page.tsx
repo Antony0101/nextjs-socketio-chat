@@ -1,15 +1,6 @@
+import Auth from "@/components/auth/auth";
+import Login from "@/components/auth/login";
 import Link from "next/link";
-import {
-    CardTitle,
-    CardDescription,
-    CardHeader,
-    CardContent,
-    CardFooter,
-    Card,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 export default async function Home() {
     return (
@@ -22,7 +13,7 @@ export default async function Home() {
                     <TextIcon className="w-6 h-6" />
                     <span>Chat App</span>
                 </Link>
-                <nav className="flex gap-4 sm:gap-6">
+                {/* <nav className="flex gap-4 sm:gap-6">
                     <Link
                         className="text-sm font-medium hover:underline"
                         href="#"
@@ -35,7 +26,7 @@ export default async function Home() {
                     >
                         Sign Up
                     </Link>
-                </nav>
+                </nav> */}
             </header>
             <main className="flex-1 flex items-center justify-center px-4 md:px-6">
                 <div className="max-w-md w-full space-y-6">
@@ -43,62 +34,9 @@ export default async function Home() {
                         <h1 className="text-4xl font-bold">
                             Welcome to Chat App
                         </h1>
-                        <p className="text-gray-200">
-                            Connect with friends and family in real-time.
-                        </p>
+                        <p className="text-gray-200">Sample real-time chat.</p>
                     </div>
-                    <Card className="bg-white dark:bg-gray-950 text-gray-900 dark:text-white">
-                        <CardHeader>
-                            <CardTitle>Login</CardTitle>
-                            <CardDescription>
-                                Enter your username and password to sign in.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label
-                                    className="text-gray-700 dark:text-gray-400"
-                                    htmlFor="username"
-                                >
-                                    Username
-                                </Label>
-                                <Input
-                                    className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
-                                    id="username"
-                                    placeholder="Enter your username"
-                                    type="text"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label
-                                    className="text-gray-700 dark:text-gray-400"
-                                    htmlFor="password"
-                                >
-                                    Password
-                                </Label>
-                                <Input
-                                    className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
-                                    id="password"
-                                    placeholder="Enter your password"
-                                    type="password"
-                                />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button
-                                className="w-full bg-[#6366F1] hover:bg-[#4F46E5] text-white"
-                                type="submit"
-                            >
-                                Login
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                    <div className="text-center text-sm">
-                        {"Don't have an account?"}
-                        <Link className="font-medium underline" href="#">
-                            Sign up
-                        </Link>
-                    </div>
+                    <Auth />
                 </div>
             </main>
             <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-gray-700/50">
