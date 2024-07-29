@@ -2,8 +2,7 @@
 import type { ActionReturnType } from "@/actions/types";
 import initAction from "@/lib/initAction";
 import UserModel, { UserEntity } from "@/models/user.model";
-import { error } from "console";
-
+import actionWrapper from "@/lib/wrappers/serverActionWrapper";
 type InputType = {
     username: string;
     password: string;
@@ -26,10 +25,10 @@ type SignUpDataType = {
     confirm_password: string;
 };
 
-async function signUpAction(
-    data: SignUpDataType,
-): Promise<ActionReturnType<UserEntity | null>> {
-    try {
+const signUpAction = actionWrapper(
+    async (
+        data: SignUpDataType,
+    ): Promise<ActionReturnType<UserEntity | null>> => {
         await initAction();
         const user = await UserModel.create({
             username: data.username,
@@ -39,16 +38,10 @@ async function signUpAction(
         });
         return {
             success: true,
-            data: user.toJSON(),
+            data: JSON.parse(JSON.stringify(user)),
             message: "sign up is successful",
         };
-    } catch (e: any) {
-        return {
-            success: false,
-            data: null,
-            message: e.message || "unkown server error",
-        };
-    }
-}
+    },
+);
 
 export { loginAction, signUpAction };
