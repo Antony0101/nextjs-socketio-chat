@@ -35,7 +35,9 @@ const UserSchema = new mongoose.Schema(
     },
 );
 
-export type UserModelType = Model<typeof UserSchema>;
+const dummyModel = (false as true) && mongoose.model("users", UserSchema);
+
+export type UserModelType = typeof dummyModel;
 
 const UserModel: UserModelType =
     mongoose.models.users || mongoose.model("users", UserSchema);

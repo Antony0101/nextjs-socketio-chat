@@ -42,12 +42,15 @@ const MessageSchema = new mongoose.Schema({
     },
 });
 
+const dummyModel = (false as true) && mongoose.model("messages", MessageSchema);
+
+export type MessageModelType = typeof dummyModel;
+
 export type MessageDocument = ExtractDocument<typeof MessageModel>;
 
 export type MessageEntity = ExtractEntity<typeof MessageModel>;
 
-const MessageModel = mongoose.model("messages", MessageSchema);
-
-export type MessageModelType = typeof MessageModel;
+const MessageModel: MessageModelType =
+    mongoose.models.messages || mongoose.model("messages", MessageSchema);
 
 export default MessageModel;
