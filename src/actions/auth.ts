@@ -3,6 +3,8 @@ import type { ActionReturnType } from "@/actions/types";
 import initAction from "@/lib/initAction";
 import UserModel, { UserEntity } from "@/models/user.model";
 import actionWrapper from "@/lib/wrappers/serverActionWrapper";
+import { createJwt, setTokenInDb } from "@/lib/auth.helper";
+import { cookies } from "next/headers";
 type InputType = {
     username: string;
     password: string;
@@ -26,9 +28,7 @@ type SignUpDataType = {
 };
 
 const signUpAction = actionWrapper(
-    async (
-        data: SignUpDataType,
-    ): Promise<ActionReturnType<UserEntity | null>> => {
+    async (data: SignUpDataType): Promise<ActionReturnType<UserEntity>> => {
         await initAction();
         const user = await UserModel.create({
             username: data.username,
@@ -36,6 +36,16 @@ const signUpAction = actionWrapper(
             name: "Sample",
             lastSeen: new Date(),
         });
+        const token = await setTokenInDb(
+            user,
+            new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
+        );
+        const payload = {
+            uid: user._id,
+            tid: token,
+        };
+        const jwt = createJwt(payload, "3d");
+        cookies().set("auth", jwt);
         return {
             success: true,
             data: JSON.parse(JSON.stringify(user)),

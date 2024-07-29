@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signUpAction } from "@/actions/auth";
+import { useRouter } from "next/navigation";
 
 type Props = {
     setSignInFunction: (a: boolean) => void;
@@ -23,6 +24,7 @@ type InputType = {
 };
 
 export default function SignUp({ setSignInFunction }: Props) {
+    const router = useRouter();
     const {
         register,
         handleSubmit,
@@ -30,13 +32,16 @@ export default function SignUp({ setSignInFunction }: Props) {
         formState: { errors },
     } = useForm<InputType>();
 
-    const onSubmit: SubmitHandler<InputType> = async (forrmDate) => {
+    const onSubmit: SubmitHandler<InputType> = async (formData) => {
         try {
-            const { success, data, message } = await signUpAction(forrmDate);
-            if (success) {
+            const { success, data, message } = await signUpAction(formData);
+            if (!success) {
+                alert(message);
             } else {
+                router.push("/chat");
             }
         } catch (e: any) {
+            alert(e.message);
             console.log(e);
         }
     };
