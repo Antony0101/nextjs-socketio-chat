@@ -1,6 +1,7 @@
 import { UserDocument } from "../models/user.model";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 async function setTokenInDb(
     userprofile: UserDocument,
@@ -29,4 +30,18 @@ const verifyJwt = (token: string): any => {
     return payload;
 };
 
-export { setTokenInDb, createJwt, verifyJwt };
+const hashPassword = async (password: string): Promise<string> => {
+    const saltrounds = 12;
+    const salt = await bcrypt.genSalt(saltrounds);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+};
+
+const comparePassword = async (
+    password: string,
+    hash: string,
+): Promise<boolean> => {
+    return await bcrypt.compare(password, hash);
+};
+
+export { setTokenInDb, createJwt, verifyJwt, comparePassword, hashPassword };

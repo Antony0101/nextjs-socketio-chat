@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { loginAction } from "@/actions/auth";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
 type InputType = {
     username: string;
@@ -22,6 +24,8 @@ type Props = {
 };
 
 export default function Login({ setSignInFunction }: Props) {
+    const router = useRouter();
+    const { toast } = useToast();
     const {
         register,
         handleSubmit,
@@ -29,11 +33,22 @@ export default function Login({ setSignInFunction }: Props) {
         formState: { errors },
     } = useForm<InputType>();
 
-    const onSubmit: SubmitHandler<InputType> = async (data) => {
+    const onSubmit: SubmitHandler<InputType> = async (formdata) => {
         try {
-            const { data: hello } = await loginAction(data);
-            console.log(hello);
+            const { success, data, message } = await loginAction(formdata);
+            if (!success) {
+                toast({
+                    variant: "destructive",
+                    description: message,
+                });
+            } else {
+                router.push("/chat");
+            }
         } catch (e: any) {
+            toast({
+                variant: "destructive",
+                description: e.message,
+            });
             console.log(e);
         }
     };

@@ -12,6 +12,9 @@ import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signUpAction } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
     setSignInFunction: (a: boolean) => void;
@@ -23,25 +26,40 @@ type InputType = {
     confirm_password: string;
 };
 
+const SignupSchema = z.object({
+    username: z.string().min(3).max(10),
+    password: z.string().min(2),
+    confirm_password: z.string(),
+});
+
+type SignUpSchemaType = z.infer<typeof SignupSchema>;
+
 export default function SignUp({ setSignInFunction }: Props) {
     const router = useRouter();
+    const { toast } = useToast();
     const {
         register,
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm<InputType>();
+    } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignupSchema) });
 
-    const onSubmit: SubmitHandler<InputType> = async (formData) => {
+    const onSubmit: SubmitHandler<SignUpSchemaType> = async (formData) => {
         try {
             const { success, data, message } = await signUpAction(formData);
             if (!success) {
-                alert(message);
+                toast({
+                    variant: "destructive",
+                    description: message,
+                });
             } else {
                 router.push("/chat");
             }
         } catch (e: any) {
-            alert(e.message);
+            toast({
+                variant: "destructive",
+                description: e.message,
+            });
             console.log(e);
         }
     };
@@ -70,6 +88,9 @@ export default function SignUp({ setSignInFunction }: Props) {
                                 type="text"
                                 {...register("username")}
                             />
+                            {errors.username && (
+                                <span>{errors.username.message}</span>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label
@@ -85,6 +106,9 @@ export default function SignUp({ setSignInFunction }: Props) {
                                 type="password"
                                 {...register("password")}
                             />
+                            {errors.password && (
+                                <span>{errors.password.message}</span>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label
@@ -100,6 +124,9 @@ export default function SignUp({ setSignInFunction }: Props) {
                                 type="password"
                                 {...register("confirm_password")}
                             />
+                            {errors.confirm_password && (
+                                <span>{errors.confirm_password.message}</span>
+                            )}
                         </div>
                     </CardContent>
                     <CardFooter>

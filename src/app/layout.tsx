@@ -1,28 +1,31 @@
 import type { Metadata } from "next";
-import { Inter } from 'next/font/google'
-import './styles.css'
+import { Inter } from "next/font/google";
+import "./styles.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-})
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
-  title: "Simple Chat App",
-  description: "simple chat app with Next.js and socket.io and mongodb",
+    title: "Simple Chat App",
+    description: "simple chat app with Next.js and socket.io and mongodb",
 };
 
-export default function Layout({ children }:Readonly<{children:React.ReactNode}>) {
-  return (
-    <html lang="en">
-      <body className={inter.variable}>
-        {children}
-      </body>
-    </html>
-  )
+export default function Layout({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
+    return (
+        <html lang="en">
+            <body className={inter.variable}>
+                {children}
+                <Toaster />
+            </body>
+        </html>
+    );
 }
-
 
 // This is the root layout component for your Next.js app.
 // Learn more: https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
