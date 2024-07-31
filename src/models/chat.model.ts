@@ -14,9 +14,9 @@ const ChatSchema = new mongoose.Schema(
                     type: Number,
                     default: 0,
                 },
-                chatProfileId: {
+                userId: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: "chatprofiles",
+                    ref: "users",
                 },
                 _id: false,
             },

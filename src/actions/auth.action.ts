@@ -1,5 +1,5 @@
 "use server";
-import type { ActionReturnType } from "@/actions/types";
+import type { ActionReturnType } from "@/actions/types.action";
 import initAction from "@/lib/initAction";
 import UserModel, { UserEntity } from "@/models/user.model";
 import actionWrapper from "@/lib/wrappers/serverActionWrapper";
@@ -22,10 +22,10 @@ const loginAction = actionWrapper(
         if (!user) {
             throw new Error("username or password is wrong");
         }
-        const isPasswordCorrect = await comparePassword(
-            user.password,
-            data.password,
-        );
+        const isPasswordCorrect = await comparePassword({
+            password: data.password,
+            hash: user.password,
+        });
         if (!isPasswordCorrect) {
             throw new Error("username or password is wrong");
         }

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { signUpAction } from "@/actions/auth";
+import { signUpAction } from "@/actions/auth.action";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
@@ -18,12 +18,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
     setSignInFunction: (a: boolean) => void;
-};
-
-type InputType = {
-    username: string;
-    password: string;
-    confirm_password: string;
 };
 
 const SignupSchema = z.object({
@@ -89,7 +83,9 @@ export default function SignUp({ setSignInFunction }: Props) {
                                 {...register("username")}
                             />
                             {errors.username && (
-                                <span>{errors.username.message}</span>
+                                <span className="text-red-700">
+                                    {errors.username.message}
+                                </span>
                             )}
                         </div>
                         <div className="space-y-2">
@@ -107,7 +103,9 @@ export default function SignUp({ setSignInFunction }: Props) {
                                 {...register("password")}
                             />
                             {errors.password && (
-                                <span>{errors.password.message}</span>
+                                <span className="text-red-700">
+                                    {errors.password.message}
+                                </span>
                             )}
                         </div>
                         <div className="space-y-2">

@@ -9,15 +9,19 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { loginAction } from "@/actions/auth";
+import { loginAction } from "@/actions/auth.action";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type InputType = {
-    username: string;
-    password: string;
-};
+const SignupSchema = z.object({
+    username: z.string(),
+    password: z.string(),
+});
+
+type SignUpSchemaType = z.infer<typeof SignupSchema>;
 
 type Props = {
     setSignInFunction: (a: boolean) => void;
@@ -31,9 +35,9 @@ export default function Login({ setSignInFunction }: Props) {
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm<InputType>();
+    } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignupSchema) });
 
-    const onSubmit: SubmitHandler<InputType> = async (formdata) => {
+    const onSubmit: SubmitHandler<SignUpSchemaType> = async (formdata) => {
         try {
             const { success, data, message } = await loginAction(formdata);
             if (!success) {
@@ -78,6 +82,11 @@ export default function Login({ setSignInFunction }: Props) {
                                 type="text"
                                 {...register("username")}
                             />
+                            {errors.username && (
+                                <span className="text-red-700">
+                                    {errors.username.message}
+                                </span>
+                            )}
                         </div>
                         <div className="space-y-2">
                             <Label
@@ -93,6 +102,11 @@ export default function Login({ setSignInFunction }: Props) {
                                 type="password"
                                 {...register("password")}
                             />
+                            {errors.password && (
+                                <span className="text-red-700">
+                                    {errors.password.message}
+                                </span>
+                            )}
                         </div>
                     </CardContent>
                     <CardFooter>
