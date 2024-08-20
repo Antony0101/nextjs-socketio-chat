@@ -8,6 +8,7 @@ import {
     createJwt,
     hashPassword,
     setTokenInDb,
+    verifyJwt,
 } from "@/lib/auth.helper";
 import { cookies } from "next/headers";
 type InputType = {
@@ -85,4 +86,18 @@ const signUpAction = actionWrapper(
     },
 );
 
-export { loginAction, signUpAction };
+const getAuthUser = actionWrapper(async () => {
+    const cookie = cookies().get("auth");
+    if (!cookie) {
+        throw new Error("unauthorized");
+    }
+    const payload = await verifyJwt(cookie.value);
+    console.log(payload);
+    return {
+        success: true,
+        data: payload,
+        message: "user is authenticated",
+    };
+});
+
+export { loginAction, signUpAction, getAuthUser };

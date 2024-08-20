@@ -5,7 +5,7 @@ import PlusIcon from "../icons/plusIcon";
 import SendIcon from "../icons/sendIcon";
 import SettingsIcon from "../icons/settingsIcon";
 
-export default async function ChatComponent() {
+export default async function ChatArea() {
     return (
         <div className="flex flex-col">
             <div className="flex h-[60px] items-center border-b bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40">

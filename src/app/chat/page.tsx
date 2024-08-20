@@ -1,11 +1,14 @@
-import ChatComponent from "@/components/chat/chatComponent";
+import { getAuthUser } from "@/actions/auth.action";
+import ChatArea from "@/components/chat/chatArea";
 import ChatSideBar from "@/components/chat/chatSideBar";
 
-export default function ChatPage() {
+export default async function ChatPage() {
+    const { data } = await getAuthUser();
+    console.log(data);
     return (
         <div className="grid h-screen w-full grid-cols-[300px_1fr] overflow-hidden">
-            <ChatSideBar />
-            <ChatComponent />
+            <ChatSideBar userId={data.uid} />
+            <ChatArea />
         </div>
     );
 }

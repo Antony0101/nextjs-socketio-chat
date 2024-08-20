@@ -1,10 +1,16 @@
+"use server";
 import { Types } from "mongoose";
-import UserModel from "../models/user.model";
+import UserModel, { UserEntity } from "../models/user.model";
 import ChatModel, { ChatDocument } from "../models/chat.model";
 import MessageModel, {
     MessageDocument,
     MessageEntity,
 } from "../models/message.model";
+import { cookies } from "next/headers";
+import initAction from "@/lib/initAction";
+import actionWrapper from "@/lib/wrappers/serverActionWrapper";
+import { ActionReturnType } from "./types.action";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 // const getSingleChat = async (
 //     candidateId: Types.ObjectId,
@@ -21,6 +27,41 @@ import MessageModel, {
 //     );
 //     return chat;
 // };
+
+const getUsers = actionWrapper(
+    async (
+        userId: Types.ObjectId,
+    ): Promise<ActionReturnType<(UserEntity & { _id: Types.ObjectId })[]>> => {
+        await initAction();
+        // const users = await ChatModel.aggregate([
+        //     { $match: { users: { $elemMatch: { userId } } } },
+        //     { $unwind: "$users" },
+        //     { $match: { "users.userId": { $ne: userId } } },
+        //     {
+        //         $lookup: {
+        //             from: "users",
+        //             localField: "users.userId",
+        //             foreignField: "_id",
+        //             as: "users.userId",
+        //         },
+        //     },
+        //     { $unwind: "$users.userId" },
+        //     {
+        //         $project: {
+        //             _id: "$users.userId._id",
+        //             name: "$users.userId.name",
+        //             profilePicture: "$users.userId.profilePicture",
+        //         },
+        //     },
+        // ]);
+        const users = await UserModel.find({}).lean();
+        return {
+            success: true,
+            data: JSON.parse(JSON.stringify(users)),
+            message: "users fetched",
+        };
+    },
+);
 
 const getChats = async (userId: Types.ObjectId) => {
     const chats = await ChatModel.find(
@@ -81,54 +122,66 @@ const getMessages = async (
     return { messages, count, chat };
 };
 
-const createChat = async (
-    type: "private" | "group",
-    userIds: Types.ObjectId[],
-    details: {
-        name?: string;
-        photo?: string;
-    },
-): Promise<ChatDocument> => {
-    if (type === "private" && userIds.length !== 2)
-        throw new Error("private chat must have 2 users");
-    if (type === "group" && userIds.length < 2)
-        throw new Error("group chat must have at least 2 users");
-    if (type === "private") {
-        const chat = await ChatModel.findOne({
-            type: "private",
-            users: {
-                $all: [
-                    { $elemMatch: { userId: userIds[0] } },
-                    { $elemMatch: { userId: userIds[1] } },
-                ],
-            },
+const createChat = actionWrapper(
+    async (
+        type: "private" | "group",
+        userIds: Types.ObjectId[],
+        details: {
+            name?: string;
+            photo?: string;
+        },
+    ): Promise<ActionReturnType<ChatDocument>> => {
+        await initAction();
+        if (type === "private" && userIds.length !== 2)
+            throw new Error("private chat must have 2 users");
+        if (type === "group" && userIds.length < 2)
+            throw new Error("group chat must have at least 2 users");
+        if (type === "private") {
+            const chat = await ChatModel.findOne({
+                type: "private",
+                users: {
+                    $all: [
+                        { $elemMatch: { userId: userIds[0] } },
+                        { $elemMatch: { userId: userIds[1] } },
+                    ],
+                },
+            });
+            if (chat)
+                return {
+                    success: true,
+                    data: JSON.parse(JSON.stringify(chat)),
+                    message: "private chat already exists",
+                };
+            // throw generateAPIError(
+            //     "private chat already exists",
+            //     errorCodes.ActionNotPermitted,
+            // );
+        }
+        const users = await Promise.all(
+            userIds.map(async (userId) => {
+                const profile = await UserModel.findOne({ _id: userId });
+                if (!profile) throw new Error("userId is invalid");
+                return { unread: 0, userId: profile._id };
+            }),
+        );
+        const chat = new ChatModel({
+            type,
+            users,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         });
-        if (chat) return chat;
-        // throw generateAPIError(
-        //     "private chat already exists",
-        //     errorCodes.ActionNotPermitted,
-        // );
-    }
-    const users = await Promise.all(
-        userIds.map(async (userId) => {
-            const profile = await UserModel.findOne({ _id: userId });
-            if (!profile) throw new Error("userId is invalid");
-            return { unread: 0, userId: profile._id };
-        }),
-    );
-    const chat = new ChatModel({
-        type,
-        users,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    });
-    if (chat.type === "group") {
-        chat.name = details.name ? details.name : "default group name";
-        chat.icon = details.photo ? details.photo : "default group icon";
-    }
-    await chat.save();
-    return chat;
-};
+        if (chat.type === "group") {
+            chat.name = details.name ? details.name : "default group name";
+            chat.icon = details.photo ? details.photo : "default group icon";
+        }
+        await chat.save();
+        return {
+            success: true,
+            data: JSON.parse(JSON.stringify(chat)),
+            message: "chat created",
+        };
+    },
+);
 
 const createMessage = async (
     chatId: Types.ObjectId,
@@ -264,5 +317,6 @@ export {
     addMemberToGroup,
     removeMemberFromGroup,
     deleteMessage,
+    getUsers,
     // getSingleChat,
 };

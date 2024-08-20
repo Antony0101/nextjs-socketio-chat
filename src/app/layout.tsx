@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles.css";
 import { Toaster } from "@/components/ui/toaster";
+import ReactQueryProvider from "@/utils/Providers/ReactQueryProvider";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -20,7 +21,7 @@ export default function Layout({
     return (
         <html lang="en">
             <body className={inter.variable}>
-                {children}
+                <ReactQueryProvider>{children}</ReactQueryProvider>
                 <Toaster />
             </body>
         </html>

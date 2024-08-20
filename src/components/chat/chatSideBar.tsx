@@ -5,17 +5,24 @@ import PlusIcon from "@/components/icons/plusIcon";
 import UserIcon from "../icons/userIcon";
 import SearchIcon from "../icons/searchIcon";
 import Link from "next/link";
+import AddChatButton from "./clientComponents/addChatButton";
+import { Types } from "mongoose";
 
-export default function ChatSideBar() {
+type Props = {
+    userId: Types.ObjectId;
+};
+
+export default async function ChatSideBar({ userId }: Props) {
     return (
         <div className="flex flex-col border-r bg-gray-100/40 dark:border-gray-800 dark:bg-gray-800/40">
             <div className="flex h-[60px] items-center border-b px-4">
                 <h2 className="text-lg font-semibold">Chats</h2>
                 <div className="ml-auto flex items-center gap-2">
-                    <Button size="icon" variant="ghost">
+                    {/* <Button size="icon" variant="ghost">
                         <PlusIcon className="h-5 w-5" />
                         <span className="sr-only">New Group</span>
-                    </Button>
+                    </Button> */}
+                    <AddChatButton userId={userId} />
                     <Button size="icon" variant="ghost">
                         <UserIcon className="h-5 w-5" />
                         <span className="sr-only">Profile</span>
