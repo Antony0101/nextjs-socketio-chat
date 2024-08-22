@@ -1,7 +1,7 @@
 "use server";
 import { Types } from "mongoose";
 import UserModel, { UserEntity } from "../models/user.model";
-import ChatModel, { ChatDocument } from "../models/chat.model";
+import ChatModel, { ChatDocument, ChatEntity } from "../models/chat.model";
 import MessageModel, {
     MessageDocument,
     MessageEntity,
@@ -11,6 +11,10 @@ import initAction from "@/lib/initAction";
 import actionWrapper from "@/lib/wrappers/serverActionWrapper";
 import { ActionReturnType } from "./types.action";
 import { JsonWebTokenError } from "jsonwebtoken";
+import {
+    mongodbArrayConverter,
+    mongodbObjectConverter,
+} from "@/utils/helpers/mongodbObjectConverter";
 
 // const getSingleChat = async (
 //     candidateId: Types.ObjectId,
@@ -29,9 +33,7 @@ import { JsonWebTokenError } from "jsonwebtoken";
 // };
 
 const getUsers = actionWrapper(
-    async (
-        userId: Types.ObjectId,
-    ): Promise<ActionReturnType<(UserEntity & { _id: Types.ObjectId })[]>> => {
+    async (userId: string): Promise<ActionReturnType<UserEntity[]>> => {
         await initAction();
         // const users = await ChatModel.aggregate([
         //     { $match: { users: { $elemMatch: { userId } } } },
@@ -54,10 +56,10 @@ const getUsers = actionWrapper(
         //         },
         //     },
         // ]);
-        const users = await UserModel.find({}).lean();
+        const users = await UserModel.find({});
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(users)),
+            data: mongodbArrayConverter(users) as any,
             message: "users fetched",
         };
     },
@@ -125,12 +127,12 @@ const getMessages = async (
 const createChat = actionWrapper(
     async (
         type: "private" | "group",
-        userIds: Types.ObjectId[],
+        userIds: string[],
         details: {
             name?: string;
             photo?: string;
         },
-    ): Promise<ActionReturnType<ChatDocument>> => {
+    ): Promise<ActionReturnType<ChatEntity>> => {
         await initAction();
         if (type === "private" && userIds.length !== 2)
             throw new Error("private chat must have 2 users");
@@ -177,7 +179,7 @@ const createChat = actionWrapper(
         await chat.save();
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(chat)),
+            data: mongodbObjectConverter(chat) as ChatEntity,
             message: "chat created",
         };
     },

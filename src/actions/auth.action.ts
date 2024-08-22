@@ -11,6 +11,7 @@ import {
     verifyJwt,
 } from "@/lib/auth.helper";
 import { cookies } from "next/headers";
+import { mongodbObjectConverter } from "@/utils/helpers/mongodbObjectConverter";
 type InputType = {
     username: string;
     password: string;
@@ -42,7 +43,7 @@ const loginAction = actionWrapper(
         cookies().set("auth", jwt, { maxAge: 1000 * 60 * 60 * 24 * 4 });
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(user)),
+            data: mongodbObjectConverter(user) as UserEntity,
             message: "sign in is successful",
         };
     },
@@ -80,24 +81,36 @@ const signUpAction = actionWrapper(
         cookies().set("auth", jwt, { maxAge: 1000 * 60 * 60 * 24 * 4 });
         return {
             success: true,
-            data: JSON.parse(JSON.stringify(user)),
+            data: mongodbObjectConverter(user) as UserEntity,
             message: "sign up is successful",
         };
     },
 );
 
-const getAuthUser = actionWrapper(async () => {
+const getAuthUser1 = actionWrapper(async () => {
     const cookie = cookies().get("auth");
     if (!cookie) {
         throw new Error("unauthorized");
     }
     const payload = await verifyJwt(cookie.value);
-    console.log(payload);
     return {
         success: true,
         data: payload,
         message: "user is authenticated",
     };
 });
+
+const getAuthUser = async () => {
+    const cookie = cookies().get("auth");
+    if (!cookie) {
+        throw new Error("unauthorized");
+    }
+    const payload = await verifyJwt(cookie.value);
+    return {
+        success: true,
+        data: payload,
+        message: "user is authenticated",
+    };
+};
 
 export { loginAction, signUpAction, getAuthUser };

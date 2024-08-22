@@ -9,7 +9,7 @@ import AddChatButton from "./clientComponents/addChatButton";
 import { Types } from "mongoose";
 
 type Props = {
-    userId: Types.ObjectId;
+    userId: string;
 };
 
 export default async function ChatSideBar({ userId }: Props) {

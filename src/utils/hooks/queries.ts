@@ -2,7 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { createChat, getUsers } from "@/actions/chat.action";
 import { Types } from "mongoose";
 
-export const useGetUserList = (userId: Types.ObjectId) => {
+export const useGetUserList = (userId: string) => {
     return useQuery({
         queryKey: [`userList`],
         queryFn: async () => {
@@ -17,11 +17,7 @@ export const useCreatePrivateChat = () => {
 
     return useMutation({
         mutationFn: async (data: { userIds: string[] }) => {
-            await createChat(
-                "private",
-                data.userIds as unknown as Types.ObjectId[],
-                {},
-            );
+            await createChat("private", data.userIds, {});
         },
         onSuccess: () => {
             // queryClient.invalidateQueries({ queryKey: ["activeJobs"] });

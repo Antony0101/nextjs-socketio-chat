@@ -12,6 +12,7 @@ function actionWrapper<T extends Array<any>, R>(
         try {
             return await fn(...args);
         } catch (e: any) {
+            console.error(e);
             return {
                 success: false,
                 data: null,

@@ -23,7 +23,7 @@ import { useCreatePrivateChat, useGetUserList } from "@/utils/hooks/queries";
 import { Types } from "mongoose";
 
 type Props = {
-    userId: Types.ObjectId;
+    userId: string;
 };
 
 export default function AddChatButton({ userId }: Props) {
@@ -37,7 +37,7 @@ export default function AddChatButton({ userId }: Props) {
         data && data.success
             ? data.data.map((d) => {
                   return {
-                      value: d._id as unknown as string,
+                      value: d._id,
                       label: d.username,
                   };
               })
@@ -55,7 +55,7 @@ export default function AddChatButton({ userId }: Props) {
                     <CommandInput placeholder="Search framework..." />
                     <CommandList>
                         <CommandEmpty>
-                            {isLoading ? "Loading..." : "No framework found."}
+                            {isLoading ? "Loading..." : "no user found."}
                         </CommandEmpty>
                         <CommandGroup>
                             {frameworks.map((framework) => (
