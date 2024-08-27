@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
         },
         profilePicture: {
             type: String,
+            required: true,
         },
         password: {
             type: String,
@@ -29,6 +30,7 @@ const UserSchema = new mongoose.Schema(
                 expiry: Date,
             },
         ],
+        privateChatUsers: [String],
     },
     {
         timestamps: true,

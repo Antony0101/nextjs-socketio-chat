@@ -1,6 +1,5 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { createChat, getUsers } from "@/actions/chat.action";
-import { Types } from "mongoose";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createChat, getChats, getUsers } from "@/actions/chat.action";
 
 export const useGetUserList = (userId: string) => {
     return useQuery({
@@ -12,15 +11,25 @@ export const useGetUserList = (userId: string) => {
     });
 };
 
+export const useGetChatList = () => {
+    return useQuery({
+        queryKey: [`chatList`],
+        queryFn: async () => {
+            const data = await getChats();
+            return data;
+        },
+    });
+};
+
 export const useCreatePrivateChat = () => {
-    // const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async (data: { userIds: string[] }) => {
             await createChat("private", data.userIds, {});
         },
         onSuccess: () => {
-            // queryClient.invalidateQueries({ queryKey: ["activeJobs"] });
+            queryClient.invalidateQueries({ queryKey: ["chatList"] });
         },
     });
 };

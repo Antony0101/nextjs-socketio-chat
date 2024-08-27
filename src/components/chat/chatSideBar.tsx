@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
 import PlusIcon from "@/components/icons/plusIcon";
 import UserIcon from "../icons/userIcon";
 import SearchIcon from "../icons/searchIcon";
 import Link from "next/link";
 import AddChatButton from "./clientComponents/addChatButton";
 import { Types } from "mongoose";
+import ChatListing from "./clientComponents/chatListing";
 
 type Props = {
     userId: string;
@@ -40,7 +40,8 @@ export default async function ChatSideBar({ userId }: Props) {
                         />
                     </div>
                 </div>
-                <div className="divide-y dark:divide-gray-800">
+                <ChatListing />
+                {/* <div className="divide-y dark:divide-gray-800">
                     <Link
                         className="flex items-center gap-3 bg-white px-4 py-3 transition-colors hover:bg-gray-100 dark:bg-gray-950 dark:hover:bg-gray-800"
                         href="#"
@@ -132,7 +133,7 @@ export default async function ChatSideBar({ userId }: Props) {
                         </div>
                         <span className="h-2 w-2 rounded-full bg-blue-500" />
                     </Link>
-                </div>
+                </div> */}
             </div>
         </div>
     );

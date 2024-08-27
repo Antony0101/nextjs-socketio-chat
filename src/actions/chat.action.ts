@@ -14,7 +14,9 @@ import { JsonWebTokenError } from "jsonwebtoken";
 import {
     mongodbArrayConverter,
     mongodbObjectConverter,
+    mongodbRecursiveObjectConverter,
 } from "@/utils/helpers/mongodbObjectConverter";
+import { getAuthUser } from "./auth.action";
 
 // const getSingleChat = async (
 //     candidateId: Types.ObjectId,
@@ -35,28 +37,10 @@ import {
 const getUsers = actionWrapper(
     async (userId: string): Promise<ActionReturnType<UserEntity[]>> => {
         await initAction();
-        // const users = await ChatModel.aggregate([
-        //     { $match: { users: { $elemMatch: { userId } } } },
-        //     { $unwind: "$users" },
-        //     { $match: { "users.userId": { $ne: userId } } },
-        //     {
-        //         $lookup: {
-        //             from: "users",
-        //             localField: "users.userId",
-        //             foreignField: "_id",
-        //             as: "users.userId",
-        //         },
-        //     },
-        //     { $unwind: "$users.userId" },
-        //     {
-        //         $project: {
-        //             _id: "$users.userId._id",
-        //             name: "$users.userId.name",
-        //             profilePicture: "$users.userId.profilePicture",
-        //         },
-        //     },
-        // ]);
-        const users = await UserModel.find({});
+        const users = await UserModel.find({
+            _id: { $ne: userId },
+            privateChatUsers: { $ne: userId },
+        });
         return {
             success: true,
             data: mongodbArrayConverter(users) as any,
@@ -65,35 +49,56 @@ const getUsers = actionWrapper(
     },
 );
 
-const getChats = async (userId: Types.ObjectId) => {
-    const chats = await ChatModel.find(
-        { users: { $elemMatch: { userId } } },
-        {},
-        { sort: { lastMessageAt: -1 } },
-    )
-        .populate("lastMessage")
-        .populate("users.userId");
-    // populate or aggreagate users in chat to get user details as only the group chat has photo and name not private chat . for private chat you have to use photo and name of the other user.
-    const chatObjects = chats.map((chat) => chat.toObject());
-    const modifiedChatObjects = chatObjects.map((chat: any) => {
-        const chatObj: typeof chat & {
-            icon?: string;
-            name?: string;
-            users: {
-                userId: { profilePicture: string; name: string };
-            }[];
-        } = chat as any;
-        chat.users = chat.users.filter(
-            (user: any) => user.userId?._id.toString() !== userId?.toString(),
-        );
-        if (chat.type === "private") {
-            (chatObj.icon = chatObj.users[0].userId.profilePicture),
-                (chatObj.name = chatObj.users[0].userId.name);
-        }
-        return chat;
-    });
-    return modifiedChatObjects;
-};
+const getChats = actionWrapper(
+    async (): Promise<ActionReturnType<ChatEntity[]>> => {
+        initAction();
+        const { data } = await getAuthUser();
+        const userId = data?.uid;
+        console.log(userId);
+        const chats = await ChatModel.find(
+            { users: { $elemMatch: { userId } } },
+            {},
+            { sort: { lastMessageAt: -1 } },
+        )
+            .populate("lastMessage")
+            .populate("users.userId");
+        // populate or aggreagate users in chat to get user details as only the group chat has photo and name not private chat . for private chat you have to use photo and name of the other user.
+        const chatObjects = chats.map((chat) => chat.toObject());
+        const modifiedChatObjects = chatObjects.map((chat: any) => {
+            const chatObj: typeof chat & {
+                icon?: string;
+                name?: string;
+                users: {
+                    userId: { profilePicture: string; name: string };
+                }[];
+            } = chat as any;
+            chat.users = chat.users
+                .filter(
+                    (user: any) =>
+                        user.userId?._id.toString() !== userId?.toString(),
+                )
+                .map((user: any) => {
+                    return {
+                        ...user,
+                        userId: {
+                            profilePicture: user.userId.profilePicture,
+                            name: user.userId.name,
+                        },
+                    };
+                });
+            if (chat.type === "private") {
+                (chatObj.icon = chatObj.users[0].userId.profilePicture),
+                    (chatObj.name = chatObj.users[0].userId.name);
+            }
+            return chat;
+        });
+        return {
+            success: true,
+            data: mongodbRecursiveObjectConverter(modifiedChatObjects) as any,
+            message: "chats fetched",
+        };
+    },
+);
 
 const getMessages = async (
     chatId: Types.ObjectId,
@@ -159,13 +164,23 @@ const createChat = actionWrapper(
             //     errorCodes.ActionNotPermitted,
             // );
         }
+        const userProfiles: any = [];
         const users = await Promise.all(
             userIds.map(async (userId) => {
                 const profile = await UserModel.findOne({ _id: userId });
                 if (!profile) throw new Error("userId is invalid");
+                userProfiles.push(profile);
                 return { unread: 0, userId: profile._id };
             }),
         );
+        // create private chat reference in users
+        if (type === "private") {
+            console.log(userProfiles[0]._id);
+            userProfiles[0].privateChatUsers.push(userProfiles[1]._id);
+            userProfiles[1].privateChatUsers.push(userProfiles[0]._id);
+            await userProfiles[0].save();
+            await userProfiles[1].save();
+        }
         const chat = new ChatModel({
             type,
             users,

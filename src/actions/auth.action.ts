@@ -17,6 +17,8 @@ type InputType = {
     password: string;
 };
 
+import { imageList, folderName } from "@/utils/imageList";
+
 const loginAction = actionWrapper(
     async (data: InputType): Promise<ActionReturnType<UserEntity>> => {
         await initAction();
@@ -63,11 +65,14 @@ const signUpAction = actionWrapper(
             throw new Error("username already exist");
         }
         const password = await hashPassword(data.password);
+        const profilePicture =
+            imageList[Math.floor(Math.random() * imageList.length)];
         const user = await UserModel.create({
             username: data.username,
             password: password,
             name: "Default Name",
             lastSeen: new Date(),
+            profilePicture: folderName + profilePicture,
         });
         const token = await setTokenInDb(
             user,
