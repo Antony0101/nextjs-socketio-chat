@@ -7,6 +7,7 @@ import Link from "next/link";
 import AddChatButton from "./clientComponents/addChatButton";
 import { Types } from "mongoose";
 import ChatListing from "./clientComponents/chatListing";
+import UserMenu from "./clientComponents/userMenu";
 
 type Props = {
     userId: string;
@@ -23,10 +24,7 @@ export default async function ChatSideBar({ userId }: Props) {
                         <span className="sr-only">New Group</span>
                     </Button> */}
                     <AddChatButton userId={userId} />
-                    <Button size="icon" variant="ghost">
-                        <UserIcon className="h-5 w-5" />
-                        <span className="sr-only">Profile</span>
-                    </Button>
+                    <UserMenu />
                 </div>
             </div>
             <div className="flex-1 overflow-auto">

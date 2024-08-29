@@ -21,6 +21,7 @@ type Props = {
 };
 
 const SignupSchema = z.object({
+    name: z.string().min(3),
     username: z.string().min(3).max(10),
     password: z.string().min(2),
     confirm_password: z.string(),
@@ -68,6 +69,26 @@ export default function SignUp({ setSignInFunction }: Props) {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label
+                                className="text-gray-700 dark:text-gray-400"
+                                htmlFor="name"
+                            >
+                                Name
+                            </Label>
+                            <Input
+                                className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
+                                id="name"
+                                placeholder="Enter your name"
+                                type="text"
+                                {...register("name")}
+                            />
+                            {errors.name && (
+                                <span className="text-red-700">
+                                    {errors.name.message}
+                                </span>
+                            )}
+                        </div>
                         <div className="space-y-2">
                             <Label
                                 className="text-gray-700 dark:text-gray-400"

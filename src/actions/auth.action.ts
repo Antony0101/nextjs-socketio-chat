@@ -52,6 +52,7 @@ const loginAction = actionWrapper(
 );
 
 type SignUpDataType = {
+    name: string;
     username: string;
     password: string;
     confirm_password: string;
@@ -70,7 +71,7 @@ const signUpAction = actionWrapper(
         const user = await UserModel.create({
             username: data.username,
             password: password,
-            name: "Default Name",
+            name: data.name,
             lastSeen: new Date(),
             profilePicture: folderName + profilePicture,
         });
