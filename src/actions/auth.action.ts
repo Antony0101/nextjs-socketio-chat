@@ -18,6 +18,7 @@ type InputType = {
 };
 
 import { imageList, folderName } from "@/utils/imageList";
+import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 const loginAction = actionWrapper(
     async (data: InputType): Promise<ActionReturnType<UserEntity>> => {
@@ -41,7 +42,7 @@ const loginAction = actionWrapper(
             uid: user._id,
             tid: token,
         };
-        const jwt = createJwt(payload, "3d");
+        const jwt = await createJwt(payload, "3d");
         cookies().set("auth", jwt, { maxAge: 1000 * 60 * 60 * 24 * 4 });
         return {
             success: true,
@@ -83,7 +84,7 @@ const signUpAction = actionWrapper(
             uid: user._id,
             tid: token,
         };
-        const jwt = createJwt(payload, "3d");
+        const jwt = await createJwt(payload, "3d");
         cookies().set("auth", jwt, { maxAge: 1000 * 60 * 60 * 24 * 4 });
         return {
             success: true,

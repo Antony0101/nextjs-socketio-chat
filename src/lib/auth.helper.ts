@@ -1,6 +1,7 @@
 import { UserDocument } from "../models/user.model";
 import crypto from "crypto";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
+import * as jose from "jose";
 import bcrypt from "bcrypt";
 
 async function setTokenInDb(
@@ -18,16 +19,24 @@ async function setTokenInDb(
     await userprofile.save();
     return tid;
 }
-const createJwt = (payload: any, time?: string): string => {
-    const token = jwt.sign(payload, process.env.JWT_SECRET || "abc", {
-        expiresIn: time || "3d",
-    });
+const createJwt = async (payload: any, time?: string): Promise<string> => {
+    const alg = "HS256";
+    const token = await new jose.SignJWT(payload)
+        .setProtectedHeader({ alg })
+        .sign(new TextEncoder().encode(process.env.JWT || "abc"));
+    // const token = jwt.sign(payload, process.env.JWT_SECRET || "abc", {
+    //     expiresIn: time || "3d",
+    // });
     return token;
 };
 
-const verifyJwt = (token: string): any => {
-    const payload = jwt.verify(token, process.env.JWT_SECRET || "abc");
-    return payload;
+const verifyJwt = async (token: string): Promise<any> => {
+    const payload = await jose.jwtVerify(
+        token,
+        new TextEncoder().encode(process.env.JWT || "abc"),
+    );
+    // const payload = jwt.verify(token, process.env.JWT_SECRET || "abc");
+    return payload.payload;
 };
 
 const hashPassword = async (password: string): Promise<string> => {

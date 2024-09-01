@@ -1,10 +1,30 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-// import connectDB from "./lib/connectDb";
+import { verifyCookie } from "./utils/helpers/authCookieChecker";
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-    // what the hell mongoose is not supported in the runtime and i cannot force nextjs to run middleware in the nodejs so i am force to run the code in the root layout.
-    // lucky for me i am already using a custom server file to support socket.io so i am moving the connect db to there.
-    // connectDB();
+export async function middleware(request: NextRequest) {
+    const cookie = request.cookies.get("auth");
+    if (request.nextUrl.pathname === "/") {
+        if (cookie && (await verifyCookie(cookie))) {
+            return NextResponse.redirect(new URL("/chat", request.nextUrl));
+        }
+    } else {
+        if (!cookie) {
+            return NextResponse.redirect(new URL("/", request.nextUrl));
+        }
+    }
 }
+
+export const config = {
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - api (API routes)
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+         */
+        "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    ],
+};
