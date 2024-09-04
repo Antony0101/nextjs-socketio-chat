@@ -1,11 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createChat, getChats, getUsers } from "@/actions/chat.action";
+import { getUserDetails } from "@/actions/user.action";
 
-export const useGetUserList = (userId: string) => {
+export const useGetUserList = () => {
     return useQuery({
         queryKey: [`userList`],
         queryFn: async () => {
-            const data = await getUsers(userId);
+            const data = await getUsers();
+            return data;
+        },
+    });
+};
+
+export const useGetSelfDetails = () => {
+    return useQuery({
+        queryKey: [`selfDetails`],
+        queryFn: async () => {
+            const data = await getUserDetails();
             return data;
         },
     });

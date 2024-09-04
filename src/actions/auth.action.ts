@@ -18,7 +18,6 @@ type InputType = {
 };
 
 import { imageList, folderName } from "@/utils/imageList";
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 const loginAction = actionWrapper(
     async (data: InputType): Promise<ActionReturnType<UserEntity>> => {
@@ -94,30 +93,40 @@ const signUpAction = actionWrapper(
     },
 );
 
-const getAuthUser1 = actionWrapper(async () => {
-    const cookie = cookies().get("auth");
-    if (!cookie) {
-        throw new Error("unauthorized");
-    }
-    const payload = await verifyJwt(cookie.value);
-    return {
-        success: true,
-        data: payload,
-        message: "user is authenticated",
-    };
-});
-
 const getAuthUser = async () => {
-    const cookie = cookies().get("auth");
-    if (!cookie) {
-        throw new Error("unauthorized");
+    try {
+        const cookie = cookies().get("auth");
+        if (!cookie) {
+            throw new Error("unauthorized");
+        }
+        if (!cookie.value) {
+            throw new Error("unauthorized");
+        }
+        console.log("cookie", cookie);
+        const payload = await verifyJwt(cookie.value);
+        return {
+            success: true,
+            data: payload,
+            message: "user is authenticated",
+        };
+    } catch (e: any) {
+        return {
+            success: false,
+            data: null,
+            message: e.message || "unauthorized",
+        };
     }
-    const payload = await verifyJwt(cookie.value);
-    return {
-        success: true,
-        data: payload,
-        message: "user is authenticated",
-    };
 };
 
-export { loginAction, signUpAction, getAuthUser };
+const signOutAction = actionWrapper(
+    async (): Promise<ActionReturnType<null>> => {
+        cookies().set("auth", "", { maxAge: 0 });
+        return {
+            success: true,
+            data: null,
+            message: "sign out is successful",
+        };
+    },
+);
+
+export { loginAction, signUpAction, getAuthUser, signOutAction };

@@ -7,7 +7,6 @@ import ChatCard from "./chatCard";
 
 export default function ChatListing() {
     const { data, isLoading } = useGetChatList();
-    console.log(isLoading, data);
     const chats: any[] = data?.data || [];
     if (isLoading) return <div>Loading...</div>;
     return (

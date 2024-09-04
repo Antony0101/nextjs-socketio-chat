@@ -14,10 +14,14 @@ import { Dialog } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { EditProfileDialog } from "./editProfile";
 import { DialogTrigger } from "@/components/ui/dialog";
+import { boolean } from "zod";
+import SignOutDialog from "./signOutDialog";
 
 export default function UserMenu() {
+    const [openEditProfile, setOpenEditProfile] = useState(false);
+    const [openSignOut, setOpenSignOut] = useState(false);
     return (
-        <Dialog>
+        <>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="ghost">
@@ -28,14 +32,23 @@ export default function UserMenu() {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
 
-                    <DialogTrigger asChild>
-                        <DropdownMenuItem>Edit Profile</DropdownMenuItem>
-                    </DialogTrigger>
+                    <DropdownMenuItem onSelect={() => setOpenEditProfile(true)}>
+                        Edit Profile
+                    </DropdownMenuItem>
 
-                    <DropdownMenuItem>Sign Out</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setOpenSignOut(true)}>
+                        Sign Out
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <EditProfileDialog />
-        </Dialog>
+            <EditProfileDialog
+                open={openEditProfile}
+                setOpen={(open: boolean) => setOpenEditProfile(open)}
+            />
+            <SignOutDialog
+                open={openSignOut}
+                setOpen={(open: boolean) => setOpenSignOut(open)}
+            />
+        </>
     );
 }

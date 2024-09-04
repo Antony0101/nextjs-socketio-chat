@@ -1,9 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
     Command,
@@ -28,7 +25,7 @@ type Props = {
 
 export default function AddChatButton({ userId }: Props) {
     const [open, setOpen] = React.useState(false);
-    const { data, isLoading } = useGetUserList(userId);
+    const { data, isLoading } = useGetUserList();
     const { mutate } = useCreatePrivateChat();
     const handleCreateChat = (otherUserId: string) => {
         mutate({ userIds: [userId.toString(), otherUserId] });

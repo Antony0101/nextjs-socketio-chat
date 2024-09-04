@@ -3,9 +3,14 @@ import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 // import jwt from "jsonwebtoken";
 import * as jose from "jose";
 
-const verifyCookie = async (cookie: RequestCookie): Promise<boolean> => {
+const verifyCookie = async (
+    cookie: RequestCookie | undefined,
+): Promise<{
+    authStatus: boolean;
+    payload: { uid: string; tid: string } | null;
+}> => {
     if (!cookie) {
-        return false;
+        return { authStatus: false, payload: null };
     }
     let payload: any = null;
     try {
@@ -16,10 +21,10 @@ const verifyCookie = async (cookie: RequestCookie): Promise<boolean> => {
         );
     } catch (e) {
         console.log("error", e);
-        return false;
+        return { authStatus: false, payload: null };
     }
     console.log("payload", payload);
-    return !!payload;
+    return { authStatus: !!payload, payload: payload?.payload };
 };
 
 export { verifyCookie };

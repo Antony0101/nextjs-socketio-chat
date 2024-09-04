@@ -6,7 +6,7 @@ import { verifyCookie } from "./utils/helpers/authCookieChecker";
 export async function middleware(request: NextRequest) {
     const cookie = request.cookies.get("auth");
     if (request.nextUrl.pathname === "/") {
-        if (cookie && (await verifyCookie(cookie))) {
+        if (cookie && (await verifyCookie(cookie)).authStatus) {
             return NextResponse.redirect(new URL("/chat", request.nextUrl));
         }
     } else {
@@ -20,7 +20,6 @@ export const config = {
     matcher: [
         /*
          * Match all request paths except for the ones starting with:
-         * - api (API routes)
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico, sitemap.xml, robots.txt (metadata files)

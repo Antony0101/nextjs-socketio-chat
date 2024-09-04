@@ -1,3 +1,4 @@
+import { updateUserDetails } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -10,45 +11,127 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { useGetSelfDetails } from "@/utils/hooks/queries";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 
-export function EditProfileDialog() {
+const UpdateUserSchema = z.object({
+    username: z.string(),
+    name: z.string(),
+    // profilePicture: z.string(),
+});
+
+type UpdateUserSchemaType = z.infer<typeof UpdateUserSchema>;
+
+export function EditProfileDialog({
+    open,
+    setOpen,
+}: {
+    open: boolean;
+    setOpen: (open: boolean) => void;
+}) {
+    const { toast } = useToast();
+    const { data, isLoading } = useGetSelfDetails();
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<UpdateUserSchemaType>({
+        resolver: zodResolver(UpdateUserSchema),
+        defaultValues: {
+            username: "",
+            name: "",
+        },
+        values: {
+            username: data?.data?.username || "",
+            name: data?.data?.name || "",
+        },
+    });
+
+    const onSubmit: SubmitHandler<UpdateUserSchemaType> = async (formdata) => {
+        try {
+            const { success, data, message } =
+                await updateUserDetails(formdata);
+            if (!success) {
+                toast({
+                    variant: "default",
+                    description: message,
+                });
+            } else {
+                toast({
+                    variant: "default",
+                    description: message,
+                });
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                setOpen(false);
+            }
+        } catch (e: any) {
+            toast({
+                variant: "destructive",
+                description: e.message,
+            });
+        }
+    };
     return (
-        <>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Edit profile</DialogTitle>
-                    <DialogDescription>
-                        {
-                            "Make changes to your profile here. Click save when you're done."
-                        }
-                    </DialogDescription>
+                    <DialogTitle>
+                        {isLoading ? "Loading ..." : "Edit Profile"}
+                    </DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">
-                            Name
-                        </Label>
-                        <Input
-                            id="name"
-                            defaultValue="Pedro Duarte"
-                            className="col-span-3"
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
-                            Username
-                        </Label>
-                        <Input
-                            id="username"
-                            defaultValue="@peduarte"
-                            className="col-span-3"
-                        />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button type="submit">Save changes</Button>
-                </DialogFooter>
+                {!isLoading && (
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="space-y-2">
+                            <Label
+                                className="text-gray-700 dark:text-gray-400"
+                                htmlFor="username"
+                            >
+                                Username
+                            </Label>
+                            <Input
+                                className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
+                                id="username"
+                                placeholder="Enter your username"
+                                type="text"
+                                {...register("username")}
+                            />
+                            {errors.username && (
+                                <span className="text-red-700">
+                                    {errors.username.message}
+                                </span>
+                            )}
+                        </div>
+                        <div className="space-y-2">
+                            <Label
+                                className="text-gray-700 dark:text-gray-400"
+                                htmlFor="name"
+                            >
+                                Name
+                            </Label>
+                            <Input
+                                className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
+                                id="password"
+                                placeholder="Enter your password"
+                                type="text"
+                                {...register("name")}
+                            />
+                            {errors.name && (
+                                <span className="text-red-700">
+                                    {errors.name.message}
+                                </span>
+                            )}
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">Save changes</Button>
+                        </DialogFooter>
+                    </form>
+                )}
             </DialogContent>
-        </>
+        </Dialog>
     );
 }

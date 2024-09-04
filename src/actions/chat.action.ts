@@ -17,6 +17,7 @@ import {
     mongodbRecursiveObjectConverter,
 } from "@/utils/helpers/mongodbObjectConverter";
 import { getAuthUser } from "./auth.action";
+import { authHelper } from "./helper.action";
 
 // const getSingleChat = async (
 //     candidateId: Types.ObjectId,
@@ -35,8 +36,9 @@ import { getAuthUser } from "./auth.action";
 // };
 
 const getUsers = actionWrapper(
-    async (userId: string): Promise<ActionReturnType<UserEntity[]>> => {
+    async (): Promise<ActionReturnType<UserEntity[]>> => {
         await initAction();
+        const userId = (await authHelper()).uid;
         const users = await UserModel.find({
             _id: { $ne: userId },
             privateChatUsers: { $ne: userId },
@@ -52,8 +54,7 @@ const getUsers = actionWrapper(
 const getChats = actionWrapper(
     async (): Promise<ActionReturnType<ChatEntity[]>> => {
         initAction();
-        const { data } = await getAuthUser();
-        const userId = data?.uid;
+        const userId = (await authHelper()).uid;
         console.log(userId);
         const chats = await ChatModel.find(
             { users: { $elemMatch: { userId } } },
