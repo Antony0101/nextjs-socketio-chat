@@ -9,7 +9,7 @@ import { authHelper } from "./helper.action";
 type InputType = {
     username: string;
     name: string;
-    // profilePicture: string;
+    profilePicture: string;
 };
 
 const updateUserDetails = actionWrapper(
@@ -22,7 +22,7 @@ const updateUserDetails = actionWrapper(
         }
         user.username = data.username;
         user.name = data.name;
-        // user.profilePicture = data.profilePicture;
+        user.profilePicture = data.profilePicture;
         await user.save();
         return {
             success: true,
