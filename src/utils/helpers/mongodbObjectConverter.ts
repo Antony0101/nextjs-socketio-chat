@@ -16,6 +16,8 @@ function mongodbRecursiveObjectConverter<T>(data: T): T {
         if (mongoose.isObjectIdOrHexString(value)) {
             const typeValue = value as mongoose.Types.ObjectId;
             result[key] = typeValue.toString();
+        } else if (value instanceof Date) {
+            result[key] = value.toISOString();
         } else if (value instanceof Object) {
             result[key] = mongodbRecursiveObjectConverter(value);
         } else {

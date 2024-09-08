@@ -55,7 +55,6 @@ const getChats = actionWrapper(
     async (): Promise<ActionReturnType<ChatEntity[]>> => {
         initAction();
         const userId = (await authHelper()).uid;
-        console.log(userId);
         const chats = await ChatModel.find(
             { users: { $elemMatch: { userId } } },
             {},
@@ -101,34 +100,65 @@ const getChats = actionWrapper(
     },
 );
 
-const getMessages = async (
-    chatId: Types.ObjectId,
-    userId: Types.ObjectId,
-    pageNo: number,
-    pageSize: number,
-): Promise<{
-    messages: MessageDocument[];
-    count: number;
-    chat: ChatDocument;
-}> => {
-    const chat = await ChatModel.findOne({ _id: chatId });
-    if (!chat) throw new Error("chatId is invalid");
-    const index = chat.users.findIndex((obj) => {
-        return obj.userId?.toString() === userId.toString();
-    });
-    if (index === -1) throw new Error("userId is invalid");
-    const count = await MessageModel.countDocuments({ chatId: chatId });
-    const messages = await MessageModel.find(
-        { chatId: chatId },
-        {},
-        { sort: { createdAt: -1 } },
-    )
-        .skip((pageNo - 1) * pageSize)
-        .limit(pageSize)
-        .populate("senderProfile");
-    // populate sender path with user details
-    return { messages, count, chat };
-};
+const getMessages = actionWrapper(
+    async (
+        chatId: string,
+        // userId: Types.ObjectId,
+        pageNo: number,
+        pageSize: number,
+    ): Promise<
+        ActionReturnType<{
+            messages: MessageDocument[];
+            count: number;
+            chat: ChatDocument | undefined;
+            pageNo: number;
+            pageSize: number;
+        }>
+    > => {
+        if (!chatId) {
+            return {
+                success: true,
+                message: "messages fetched successsfuly",
+                data: {
+                    messages: [],
+                    count: 0,
+                    chat: undefined,
+                    pageNo,
+                    pageSize,
+                },
+            };
+        }
+        initAction();
+        const userId = (await authHelper()).uid;
+        const chat = await ChatModel.findOne({ _id: chatId });
+        if (!chat) throw new Error("chatId is invalid");
+        const index = chat.users.findIndex((obj) => {
+            return obj.userId?.toString() === userId.toString();
+        });
+        if (index === -1) throw new Error("userId is invalid");
+        const count = await MessageModel.countDocuments({ chatId: chatId });
+        const messages = await MessageModel.find(
+            { chatId: chatId },
+            {},
+            { sort: { createdAt: -1 } },
+        )
+            .skip((pageNo - 1) * pageSize)
+            .limit(pageSize)
+            .populate("senderId");
+        // populate sender path with user details
+        return {
+            success: true,
+            message: "messages fetched successsfuly",
+            data: {
+                messages: mongodbArrayConverter(messages),
+                count,
+                chat: mongodbObjectConverter(chat) as ChatDocument,
+                pageNo,
+                pageSize,
+            },
+        };
+    },
+);
 
 const createChat = actionWrapper(
     async (
@@ -202,8 +232,8 @@ const createChat = actionWrapper(
 );
 
 const createMessage = async (
-    chatId: Types.ObjectId,
-    userId: Types.ObjectId,
+    chatId: string,
+    userId: string,
     message: { messageType: string; message: string },
 ): Promise<{
     message: MessageEntity & { senderProfile?: any };
@@ -243,6 +273,32 @@ const createMessage = async (
     }
     return { message: messageDocObj, room: socketroom };
 };
+
+const createMessageAction = actionWrapper(
+    async (
+        chatId: string,
+        message: { messageType: string; message: string },
+    ): Promise<
+        ActionReturnType<{
+            message: MessageEntity & { senderProfile?: any };
+        }>
+    > => {
+        await initAction();
+        const userId = (await authHelper()).uid;
+        const { message: messageResult } = await createMessage(
+            chatId,
+            userId,
+            message,
+        );
+        return {
+            success: true,
+            data: {
+                message: mongodbRecursiveObjectConverter(messageResult) as any,
+            },
+            message: "message created",
+        };
+    },
+);
 
 const addMemberToGroup = async (
     chatId: Types.ObjectId,
@@ -336,5 +392,6 @@ export {
     removeMemberFromGroup,
     deleteMessage,
     getUsers,
+    createMessageAction,
     // getSingleChat,
 };

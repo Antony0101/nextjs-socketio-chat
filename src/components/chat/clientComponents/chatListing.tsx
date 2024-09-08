@@ -1,13 +1,12 @@
 "use client";
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect } from "react";
 import { useGetChatList } from "@/utils/hooks/queries";
 import ChatCard from "./chatCard";
+import { useChatIdContext } from "@/lib/contexts/chatContext";
 
 export default function ChatListing() {
     const { data, isLoading } = useGetChatList();
     const chats: any[] = data?.data || [];
+    const { selectedChat, setSelectedChat } = useChatIdContext();
     if (isLoading) return <div>Loading...</div>;
     return (
         <div className="divide-y dark:divide-gray-800">
@@ -20,6 +19,8 @@ export default function ChatListing() {
                     key={chat._id}
                     chatId={chat._id}
                     isOnline={true}
+                    isSelected={selectedChat.chatId === chat._id}
+                    setSelectedChat={setSelectedChat}
                 />
             ))}
         </div>

@@ -118,6 +118,34 @@ const getAuthUser = async () => {
     }
 };
 
+const getAuthUserDetails = async () => {
+    try {
+        const cookie = cookies().get("auth");
+        if (!cookie) {
+            throw new Error("unauthorized");
+        }
+        if (!cookie.value) {
+            throw new Error("unauthorized");
+        }
+        const payload = await verifyJwt(cookie.value);
+        const user = await UserModel.findById(payload.uid);
+        if (!user) {
+            throw new Error("user not found");
+        }
+        return {
+            success: true,
+            data: mongodbObjectConverter(user) as UserEntity,
+            message: "user is authenticated",
+        };
+    } catch (e: any) {
+        return {
+            success: false,
+            data: null,
+            message: e.message || "unauthorized",
+        };
+    }
+};
+
 const signOutAction = actionWrapper(
     async (): Promise<ActionReturnType<null>> => {
         cookies().set("auth", "", { maxAge: 0 });

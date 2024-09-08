@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createChat, getChats, getUsers } from "@/actions/chat.action";
+import {
+    createChat,
+    getChats,
+    getMessages,
+    getUsers,
+} from "@/actions/chat.action";
 import { getUserDetails } from "@/actions/user.action";
 
 export const useGetUserList = () => {
@@ -41,6 +46,16 @@ export const useCreatePrivateChat = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["chatList"] });
+        },
+    });
+};
+
+export const useGetMessageList = ({ chatId }: { chatId: string }) => {
+    return useQuery({
+        queryKey: [`messageList`, chatId],
+        queryFn: async () => {
+            const data = await getMessages(chatId, 1, 10);
+            return data;
         },
     });
 };

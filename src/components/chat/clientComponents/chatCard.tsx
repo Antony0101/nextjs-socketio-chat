@@ -8,6 +8,16 @@ type Props = {
     profilePicture: string;
     lastMessage?: string | null;
     isOnline: boolean;
+    isSelected: boolean;
+    setSelectedChat: React.Dispatch<
+        React.SetStateAction<{
+            chatId: string;
+            chatName: string;
+            profilePicture: string;
+            isOnline: boolean;
+            lastSeen: string;
+        }>
+    >;
 };
 
 export default function ChatCard({
@@ -17,11 +27,21 @@ export default function ChatCard({
     profilePicture,
     lastMessage,
     isOnline,
+    isSelected,
+    setSelectedChat,
 }: Props) {
     return (
-        <Link
-            className="flex items-center gap-3 bg-white px-4 py-3 transition-colors hover:bg-gray-100 dark:bg-gray-950 dark:hover:bg-gray-800"
-            href="#"
+        <div
+            className={`flex items-center gap-3 ${isSelected ? "bg-gray-100" : "bg-white"} px-4 py-3 transition-colors hover:bg-gray-100 dark:bg-gray-950 dark:hover:bg-gray-800`}
+            onClick={() =>
+                setSelectedChat({
+                    chatId,
+                    chatName: name,
+                    profilePicture,
+                    isOnline,
+                    lastSeen: lastMessageTime?.toString() || "",
+                })
+            }
         >
             <Image
                 alt="Avatar"
@@ -41,6 +61,6 @@ export default function ChatCard({
                 </p>
             </div>
             {isOnline && <span className="h-2 w-2 rounded-full bg-blue-500" />}
-        </Link>
+        </div>
     );
 }
