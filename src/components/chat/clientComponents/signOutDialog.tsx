@@ -1,6 +1,6 @@
 "use client";
 
-import { signOutAction } from "@/actions/auth.action";
+import { signOutAction } from "@/server/actions/auth.action";
 import {
     AlertDialog,
     AlertDialogAction,

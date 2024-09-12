@@ -4,8 +4,8 @@ import {
     getChats,
     getMessages,
     getUsers,
-} from "@/actions/chat.action";
-import { getUserDetails } from "@/actions/user.action";
+} from "@/server/actions/chat.action";
+import { getUserDetails } from "@/server/actions/user.action";
 
 export const useGetUserList = () => {
     return useQuery({

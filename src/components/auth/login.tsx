@@ -9,7 +9,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { loginAction } from "@/actions/auth.action";
+import { loginAction } from "@/server/actions/auth.action";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { signUpAction } from "@/actions/auth.action";
+import { signUpAction } from "@/server/actions/auth.action";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";

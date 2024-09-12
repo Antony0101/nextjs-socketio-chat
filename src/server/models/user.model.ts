@@ -1,5 +1,5 @@
 import mongoose, { Model } from "mongoose";
-import { ExtractDocument, ExtractEntity } from "../lib/tsHelpers";
+import { ExtractDocument, ExtractEntity } from "../../lib/tsHelpers";
 
 const UserSchema = new mongoose.Schema(
     {

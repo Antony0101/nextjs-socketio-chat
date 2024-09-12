@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/actions/auth.action";
+import { getAuthUser } from "@/server/actions/auth.action";
 import ChatArea from "@/components/chat/chatArea";
 import ChatSideBar from "@/components/chat/chatSideBar";
 import { ChatIdContextProvider } from "@/lib/contexts/chatContext";

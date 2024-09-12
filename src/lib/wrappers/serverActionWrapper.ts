@@ -1,5 +1,3 @@
-import initAction from "../initAction";
-
 function actionWrapper<T extends Array<any>, R>(
     fn: (...args: T) => Promise<{ success: boolean; data: R; message: string }>,
 ) {

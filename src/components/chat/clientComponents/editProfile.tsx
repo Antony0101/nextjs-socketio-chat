@@ -1,4 +1,4 @@
-import { updateUserDetails } from "@/actions/user.action";
+import { updateUserDetails } from "@/server/actions/user.action";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,

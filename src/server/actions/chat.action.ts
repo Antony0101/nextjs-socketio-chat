@@ -1,11 +1,14 @@
 "use server";
 import { Types } from "mongoose";
-import UserModel, { UserEntity } from "../models/user.model";
-import ChatModel, { ChatDocument, ChatEntity } from "../models/chat.model";
+import UserModel, { UserEntity } from "@/server/models/user.model";
+import ChatModel, {
+    ChatDocument,
+    ChatEntity,
+} from "@/server/models/chat.model";
 import MessageModel, {
     MessageDocument,
     MessageEntity,
-} from "../models/message.model";
+} from "@/server/models/message.model";
 import { cookies } from "next/headers";
 import initAction from "@/lib/initAction";
 import actionWrapper from "@/lib/wrappers/serverActionWrapper";

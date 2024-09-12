@@ -1,7 +1,7 @@
 "use server";
-import type { ActionReturnType } from "@/actions/types.action";
+import type { ActionReturnType } from "@/server/actions/types.action";
 import initAction from "@/lib/initAction";
-import UserModel, { UserEntity } from "@/models/user.model";
+import UserModel, { UserEntity } from "@/server/models/user.model";
 import actionWrapper from "@/lib/wrappers/serverActionWrapper";
 import {
     comparePassword,

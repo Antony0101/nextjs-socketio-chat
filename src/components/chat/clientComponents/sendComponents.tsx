@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import SendIcon from "../../icons/sendIcon";
 import { useState } from "react";
 import { useChatIdContext } from "@/lib/contexts/chatContext";
-import { createMessageAction } from "@/actions/chat.action";
+import { createMessageAction } from "@/server/actions/chat.action";
 
 function SendChatMessage() {
     const [input, setInput] = useState("");

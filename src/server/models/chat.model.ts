@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ExtractDocument, ExtractEntity } from "../lib/tsHelpers.js";
+import { ExtractDocument, ExtractEntity } from "../../lib/tsHelpers.js";
 
 const ChatSchema = new mongoose.Schema(
     {

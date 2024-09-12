@@ -1,4 +1,4 @@
-import { UserDocument } from "../models/user.model";
+import { UserDocument } from "../server/models/user.model";
 import crypto from "crypto";
 // import jwt from "jsonwebtoken";
 import * as jose from "jose";
