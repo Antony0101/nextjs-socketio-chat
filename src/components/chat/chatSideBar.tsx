@@ -3,6 +3,7 @@ import SearchIcon from "../icons/searchIcon";
 import AddChatButton from "./clientComponents/addChatButton";
 import ChatListing from "./clientComponents/chatListing";
 import UserMenu from "./clientComponents/userMenu";
+import { AddGroupDialog } from "./clientComponents/addGroupButton";
 
 type Props = {
     userId: string;
@@ -14,6 +15,7 @@ export default async function ChatSideBar({ userId }: Props) {
             <div className="flex h-[60px] items-center border-b px-4">
                 <h2 className="text-lg font-semibold">Chats</h2>
                 <div className="ml-auto flex items-center gap-2">
+                    <AddGroupDialog />
                     <AddChatButton userId={userId} />
                     <UserMenu />
                 </div>

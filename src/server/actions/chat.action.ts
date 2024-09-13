@@ -54,6 +54,45 @@ const getUsers = actionWrapper(
     },
 );
 
+const getUsersInGroup = actionWrapper(
+    async (
+        groupId: string,
+        type: "in" | "available" | "allExceptSelf",
+    ): Promise<ActionReturnType<UserEntity[]>> => {
+        await initAction();
+        const userId = (await authHelper()).uid;
+        if (type === "allExceptSelf") {
+            const users = await UserModel.find({
+                _id: { $ne: userId },
+            });
+            return {
+                success: true,
+                data: mongodbArrayConverter(users) as any,
+                message: "users fetched",
+            };
+        }
+        const chat = await ChatModel.findOne({ _id: groupId });
+        if (!chat) throw new Error("chatId is invalid");
+        if (chat.type !== "group") throw new Error("chat is not a group chat");
+        const userIds = chat.users.map((user) => user.userId);
+        let users: UserEntity[] = [];
+        if (type === "in") {
+            users = await UserModel.find({
+                _id: { $in: userIds },
+            });
+        } else {
+            users = await UserModel.find({
+                _id: { $nin: userIds },
+            });
+        }
+        return {
+            success: true,
+            data: mongodbArrayConverter(users) as any,
+            message: "users fetched",
+        };
+    },
+);
+
 const getChats = actionWrapper(
     async (): Promise<ActionReturnType<ChatEntity[]>> => {
         initAction();
@@ -223,7 +262,7 @@ const createChat = actionWrapper(
         });
         if (chat.type === "group") {
             chat.name = details.name ? details.name : "default group name";
-            chat.icon = details.photo ? details.photo : "default group icon";
+            chat.icon = details.photo ? details.photo : "";
         }
         await chat.save();
         return {
@@ -397,4 +436,5 @@ export {
     getUsers,
     createMessageAction,
     // getSingleChat,
+    getUsersInGroup,
 };

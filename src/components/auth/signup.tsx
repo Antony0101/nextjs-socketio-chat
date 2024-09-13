@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUserContext } from "@/lib/contexts/userContext";
 
 type Props = {
     setSignInFunction: (a: boolean) => void;
@@ -30,6 +31,7 @@ const SignupSchema = z.object({
 type SignUpSchemaType = z.infer<typeof SignupSchema>;
 
 export default function SignUp({ setSignInFunction }: Props) {
+    const { setUser } = useUserContext();
     const router = useRouter();
     const { toast } = useToast();
     const {
@@ -48,6 +50,12 @@ export default function SignUp({ setSignInFunction }: Props) {
                     description: message,
                 });
             } else {
+                setUser({
+                    name: data.name,
+                    username: data.username,
+                    profilePicture: data.profilePicture,
+                    _id: data._id,
+                });
                 router.push("/chat");
             }
         } catch (e: any) {

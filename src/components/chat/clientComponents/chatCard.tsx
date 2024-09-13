@@ -47,7 +47,11 @@ export default function ChatCard({
                 alt="Avatar"
                 className="h-10 w-10 rounded-full"
                 height={40}
-                src={profilePicture}
+                src={
+                    profilePicture.startsWith("/")
+                        ? profilePicture
+                        : "/" + profilePicture
+                }
                 style={{
                     aspectRatio: "40/40",
                     objectFit: "cover",

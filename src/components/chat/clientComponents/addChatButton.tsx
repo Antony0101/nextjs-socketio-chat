@@ -15,7 +15,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import PlusIcon from "@/components/icons/plusIcon";
+import AddUserIcon from "@/components/icons/addUserIcon";
 import { useCreatePrivateChat, useGetUserList } from "@/utils/hooks/queries";
 import { Types } from "mongoose";
 
@@ -43,13 +43,13 @@ export default function AddChatButton({ userId }: Props) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button size="icon" variant="ghost">
-                    <PlusIcon className="h-5 w-5" />
+                    <AddUserIcon className="h-7 w-10" />
                     <span className="sr-only">New Group</span>
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
                 <Command>
-                    <CommandInput placeholder="Search framework..." />
+                    <CommandInput placeholder="Search users..." />
                     <CommandList>
                         <CommandEmpty>
                             {isLoading ? "Loading..." : "no user found."}

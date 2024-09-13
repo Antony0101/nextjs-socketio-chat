@@ -4,6 +4,7 @@ import {
     getChats,
     getMessages,
     getUsers,
+    getUsersInGroup,
 } from "@/server/actions/chat.action";
 import { getUserDetails } from "@/server/actions/user.action";
 
@@ -12,6 +13,22 @@ export const useGetUserList = () => {
         queryKey: [`userList`],
         queryFn: async () => {
             const data = await getUsers();
+            return data;
+        },
+    });
+};
+
+export const useGetUsersInGroup = ({
+    groupId,
+    type,
+}: {
+    groupId: string;
+    type: "in" | "available" | "allExceptSelf";
+}) => {
+    return useQuery({
+        queryKey: [`usersInGroup`, groupId, type],
+        queryFn: async () => {
+            const data = await getUsersInGroup(groupId, type);
             return data;
         },
     });
