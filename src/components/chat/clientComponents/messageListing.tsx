@@ -1,10 +1,9 @@
 "use client";
-import { useChatIdContext } from "@/lib/contexts/chatContext";
+import { useChatContext } from "@/lib/contexts/chatContext";
+import { useUserContext } from "@/lib/contexts/userContext";
 import { useGetMessageList } from "@/utils/hooks/queries";
 import { profile } from "console";
 import Image from "next/image";
-
-const data = [1, 2, 3];
 
 type MessageProps = {
     message: string;
@@ -12,7 +11,7 @@ type MessageProps = {
     profilePicture: string;
 };
 
-function SendMessage({ message, time, profilePicture }: MessageProps) {
+function SendedMessage({ message, time, profilePicture }: MessageProps) {
     return (
         <div className="flex justify-end gap-2">
             <div className="rounded-lg bg-blue-500 p-3 text-sm text-white">
@@ -59,27 +58,41 @@ function ReceivedMessage({ message, time, profilePicture }: MessageProps) {
 }
 
 export default function MessageListing() {
-    const { selectedChat } = useChatIdContext();
+    const { selectedChat } = useChatContext();
+    const { user } = useUserContext();
     const { data, isLoading } = useGetMessageList({
         chatId: selectedChat.chatId,
     });
     const messages = data?.data?.messages || [];
-    console.log(data);
     return (
         <>
             {/* <SendMessage />
             <ReceivedMessage /> */}
             {messages.map((item, index) => {
                 const senderId = item.senderId as any;
-                console.log(item);
-                return (
-                    <ReceivedMessage
-                        key={index}
-                        message={item.message}
-                        time={new Date(item.createdAt!).toLocaleTimeString()}
-                        profilePicture={senderId.profilePicture}
-                    />
-                );
+                if (senderId._id === user._id) {
+                    return (
+                        <SendedMessage
+                            key={index}
+                            message={item.message}
+                            time={new Date(
+                                item.createdAt!,
+                            ).toLocaleTimeString()}
+                            profilePicture={senderId.profilePicture}
+                        />
+                    );
+                } else {
+                    return (
+                        <ReceivedMessage
+                            key={index}
+                            message={item.message}
+                            time={new Date(
+                                item.createdAt!,
+                            ).toLocaleTimeString()}
+                            profilePicture={senderId.profilePicture}
+                        />
+                    );
+                }
             })}
         </>
     );

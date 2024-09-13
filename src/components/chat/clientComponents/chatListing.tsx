@@ -1,12 +1,12 @@
 "use client";
 import { useGetChatList } from "@/utils/hooks/queries";
 import ChatCard from "./chatCard";
-import { useChatIdContext } from "@/lib/contexts/chatContext";
+import { useChatContext } from "@/lib/contexts/chatContext";
 
 export default function ChatListing() {
     const { data, isLoading } = useGetChatList();
     const chats: any[] = data?.data || [];
-    const { selectedChat, setSelectedChat } = useChatIdContext();
+    const { selectedChat, setSelectedChat } = useChatContext();
     if (isLoading) return <div>Loading...</div>;
     return (
         <div className="divide-y dark:divide-gray-800">

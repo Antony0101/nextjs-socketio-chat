@@ -146,15 +146,11 @@ const getMessages = actionWrapper(
     async (
         chatId: string,
         // userId: Types.ObjectId,
-        pageNo: number,
-        pageSize: number,
     ): Promise<
         ActionReturnType<{
             messages: MessageDocument[];
             count: number;
             chat: ChatDocument | undefined;
-            pageNo: number;
-            pageSize: number;
         }>
     > => {
         if (!chatId) {
@@ -165,8 +161,6 @@ const getMessages = actionWrapper(
                     messages: [],
                     count: 0,
                     chat: undefined,
-                    pageNo,
-                    pageSize,
                 },
             };
         }
@@ -183,10 +177,7 @@ const getMessages = actionWrapper(
             { chatId: chatId },
             {},
             { sort: { createdAt: -1 } },
-        )
-            .skip((pageNo - 1) * pageSize)
-            .limit(pageSize)
-            .populate("senderId");
+        ).populate("senderId");
         // populate sender path with user details
         return {
             success: true,
@@ -195,8 +186,6 @@ const getMessages = actionWrapper(
                 messages: mongodbArrayConverter(messages),
                 count,
                 chat: mongodbObjectConverter(chat) as ChatDocument,
-                pageNo,
-                pageSize,
             },
         };
     },
@@ -320,11 +309,7 @@ const createMessageAction = actionWrapper(
     async (
         chatId: string,
         message: { messageType: string; message: string },
-    ): Promise<
-        ActionReturnType<{
-            message: MessageEntity & { senderProfile?: any };
-        }>
-    > => {
+    ): Promise<ActionReturnType<null>> => {
         await initAction();
         const userId = (await authHelper()).uid;
         const { message: messageResult } = await createMessage(
@@ -334,9 +319,7 @@ const createMessageAction = actionWrapper(
         );
         return {
             success: true,
-            data: {
-                message: mongodbRecursiveObjectConverter(messageResult) as any,
-            },
+            data: null,
             message: "message created",
         };
     },

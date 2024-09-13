@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 
-type ChatIdContextType = {
+type ChatContextType = {
     selectedChat: {
         chatId: string;
         chatName: string;
@@ -21,7 +21,7 @@ type ChatIdContextType = {
     >;
 };
 
-const ChatIdContext = createContext<ChatIdContextType | null>(null);
+const ChatContext = createContext<ChatContextType | null>(null);
 
 export function ChatIdContextProvider({
     children,
@@ -36,17 +36,17 @@ export function ChatIdContextProvider({
         lastSeen: "",
     });
     return (
-        <ChatIdContext.Provider value={{ selectedChat, setSelectedChat }}>
+        <ChatContext.Provider value={{ selectedChat, setSelectedChat }}>
             {children}
-        </ChatIdContext.Provider>
+        </ChatContext.Provider>
     );
 }
 
-export function useChatIdContext() {
-    const context = useContext(ChatIdContext);
+export function useChatContext() {
+    const context = useContext(ChatContext);
     if (!context) {
         throw new Error(
-            "useChatIdContext must be used within a ChatIdContextProvider",
+            "useChatContext must be used within a ChatContextProvider",
         );
     }
     return context;

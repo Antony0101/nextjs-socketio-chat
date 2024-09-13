@@ -71,7 +71,7 @@ export const useGetMessageList = ({ chatId }: { chatId: string }) => {
     return useQuery({
         queryKey: [`messageList`, chatId],
         queryFn: async () => {
-            const data = await getMessages(chatId, 1, 10);
+            const data = await getMessages(chatId);
             return data;
         },
     });
