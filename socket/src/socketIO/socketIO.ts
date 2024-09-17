@@ -5,6 +5,7 @@ import { ServerInstance } from "./socketIOTypes.js";
 // import { verifyCookie } from "../../utils/helpers/authCookieChecker.js";
 // import { getUserDetails } from "./user.internal.js";
 import ChatModel from "../models/chat.model.js";
+import axios from "axios";
 
 const setupWss = (httpServer: http.Server) => {
     const wss: ServerInstance = new Server(httpServer, {
@@ -17,14 +18,12 @@ const setupWss = (httpServer: http.Server) => {
         try {
             const token =
                 socket.handshake.auth.token || socket.handshake.headers.token;
-            // const jwtSecret = process.env.JWT;
-            // const auth = await verifyCookie({ value: token } as any);
-            // if (!auth.authStatus) {
-            //     return next(new Error("Unauthorized"));
-            // }
-            // const user = getUserDetails(auth?.payload?.uid!);
-            // socket.data.session = user;
-            socket.data.session = {};
+            const res = await axios.get("http://localhost:3000/api/get-user", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            socket.data.session = res.data.user;
             next();
         } catch (err: any) {
             //console.log(err);
@@ -33,6 +32,7 @@ const setupWss = (httpServer: http.Server) => {
     });
 
     wss.on("connection", async (ws) => {
+        console.log("connected: ", ws.data.session._id, ws.data.session.name);
         const chats = await ChatModel.find({
             users: { $elemMatch: { userId: ws.data.session._id } },
         });
@@ -46,7 +46,7 @@ const setupWss = (httpServer: http.Server) => {
                     ...x.users.find(
                         (y) =>
                             y.userId?.toString() !==
-                            ws.data.session._id.toString(),
+                            ws.data.session._id.toString()
                     ),
                 };
             });
@@ -75,11 +75,11 @@ const setupWss = (httpServer: http.Server) => {
         ws.join(`to-${ws.data.session._id}`);
 
         ws.on("createMessage", (data, callback) =>
-            SocketEventsController.sendMessageEvent(ws, data, callback),
+            SocketEventsController.sendMessageEvent(ws, data, callback)
         );
 
         ws.on("deleteMessage", (data, callback) =>
-            SocketEventsController.deleteMessageEvent(ws, data, callback),
+            SocketEventsController.deleteMessageEvent(ws, data, callback)
         );
         // ws.on(wsEvents.USER_SAW_MESSAGES, (data, callback) => updateLastSeen(ws, data, callback))
         // ws.on(wsEvents.USER_TYPING, (data, callback) => sendTypingIndicator(ws, data, callback))

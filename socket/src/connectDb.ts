@@ -6,7 +6,7 @@ const DATABASE_URL =
 
 if (!DATABASE_URL) {
     throw new Error(
-        "Please define the DATABASE_URL environment variable inside .env",
+        "Please define the DATABASE_URL environment variable inside .env"
     );
 }
 
@@ -30,17 +30,14 @@ async function connectDB() {
         return cached.conn;
     }
     if (!cached.promise) {
-        const opts = {
-            bufferCommands: false,
-        };
         console.log("connecting to db...");
         cached.promise = mongoose
-            .connect(DATABASE_URL, opts)
+            .connect(DATABASE_URL)
             .then((mongoose: any) => {
+                console.log("connected to db");
                 return mongoose;
             });
     }
-    console.log("hdfdfhfdsfhd");
     cached.conn = await cached.promise;
     return cached.conn;
 }
