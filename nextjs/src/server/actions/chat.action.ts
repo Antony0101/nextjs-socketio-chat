@@ -1,10 +1,7 @@
 "use server";
 import { Types } from "mongoose";
 import UserModel, { UserEntity } from "../models/user.model";
-import ChatModel, {
-    ChatDocument,
-    ChatEntity,
-} from "../models/chat.model";
+import ChatModel, { ChatDocument, ChatEntity } from "../models/chat.model";
 import MessageModel, {
     MessageDocument,
     MessageEntity,
@@ -18,7 +15,7 @@ import {
     mongodbRecursiveObjectConverter,
 } from "../../utils/helpers/mongodbObjectConverter";
 import { authHelper } from "./helper.action";
-import { createMessage, deleteMessage } from "../internalAction/chat.internal";
+// import { createMessage, deleteMessage } from "../internalAction/chat.internal";
 
 // const getSingleChat = async (
 //     candidateId: Types.ObjectId,
@@ -93,7 +90,7 @@ const getUsersInGroup = actionWrapper(
 
 const getChats = actionWrapper(
     async (): Promise<ActionReturnType<ChatEntity[]>> => {
-        initAction();
+        await initAction();
         const userId = (await authHelper()).uid;
         const chats = await ChatModel.find(
             { users: { $elemMatch: { userId } } },
@@ -162,7 +159,7 @@ const getMessages = actionWrapper(
                 },
             };
         }
-        initAction();
+        await initAction();
         const userId = (await authHelper()).uid;
         const chat = await ChatModel.findOne({ _id: chatId });
         if (!chat) throw new Error("chatId is invalid");
@@ -260,33 +257,32 @@ const createChat = actionWrapper(
     },
 );
 
-const createMessageAction = actionWrapper(
-    async (
-        chatId: string,
-        message: { messageType: string; message: string },
-    ): Promise<ActionReturnType<null>> => {
-        await initAction();
-        const userId = (await authHelper()).uid;
-        const { message: messageResult } = await createMessage(
-            chatId,
-            userId,
-            message,
-        );
-        return {
-            success: true,
-            data: null,
-            message: "message created",
-        };
-    },
-);
-
+// const createMessageAction = actionWrapper(
+//     async (
+//         chatId: string,
+//         message: { messageType: string; message: string },
+//     ): Promise<ActionReturnType<null>> => {
+//         await initAction();
+//         const userId = (await authHelper()).uid;
+//         const { message: messageResult } = await createMessage(
+//             chatId,
+//             userId,
+//             message,
+//         );
+//         return {
+//             success: true,
+//             data: null,
+//             message: "message created",
+//         };
+//     },
+// );
 
 export {
     getChats,
     getMessages,
     createChat,
     getUsers,
-    createMessageAction,
+    // createMessageAction,
     // getSingleChat,
     getUsersInGroup,
 };

@@ -10,14 +10,12 @@ import {
     CommandItem,
     CommandList,
 } from "../../ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "../../ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import AddUserIcon from "../../icons/addUserIcon";
-import { useCreatePrivateChat, useGetUserList } from "../../../utils/hooks/queries";
-import { Types } from "mongoose";
+import {
+    useCreatePrivateChat,
+    useGetUserList,
+} from "../../../utils/hooks/queries";
 
 type Props = {
     userId: string;

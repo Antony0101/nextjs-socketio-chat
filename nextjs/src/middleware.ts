@@ -9,6 +9,8 @@ export async function middleware(request: NextRequest) {
         if (cookie && (await verifyCookie(cookie)).authStatus) {
             return NextResponse.redirect(new URL("/chat", request.nextUrl));
         }
+    } else if (request.nextUrl.pathname.startsWith("/api")) {
+        // do nothing
     } else {
         if (!cookie) {
             return NextResponse.redirect(new URL("/", request.nextUrl));

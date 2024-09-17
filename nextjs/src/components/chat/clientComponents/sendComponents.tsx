@@ -5,7 +5,7 @@ import { Input } from "../../ui/input";
 import SendIcon from "../../icons/sendIcon";
 import { useState } from "react";
 import { useChatContext } from "../../../lib/contexts/chatContext";
-import { createMessageAction } from "../../../server/actions/chat.action";
+// import { createMessageAction } from "../../../server/actions/chat.action";
 import { useQueryClient } from "@tanstack/react-query";
 
 function SendChatMessage() {
@@ -13,10 +13,10 @@ function SendChatMessage() {
     const { selectedChat } = useChatContext();
     const queryClient = useQueryClient();
     const sendMessage = async () => {
-        await createMessageAction(selectedChat.chatId, {
-            message: input,
-            messageType: "text",
-        });
+        // await createMessageAction(selectedChat.chatId, {
+        //     message: input,
+        //     messageType: "text",
+        // });
         setInput("");
         queryClient.invalidateQueries({ queryKey: ["messageList"] });
     };
