@@ -36,10 +36,10 @@ async function connectDB() {
         cached.promise = mongoose
             .connect(DATABASE_URL, opts)
             .then((mongoose: any) => {
+                console.log("connected to db");
                 return mongoose;
             });
     }
-    console.log("hdfdfhfdsfhd");
     cached.conn = await cached.promise;
     return cached.conn;
 }

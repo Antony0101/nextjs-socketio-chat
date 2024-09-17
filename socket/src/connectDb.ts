@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 
-const DATABASE_URL =
-    process.env.DATABASE_URL ||
-    "mongodb+srv://tony:tony@cluster0.owtnv.mongodb.net/chat_app_next?retryWrites=true&w=majority";
+const DATABASE_URL = process.env.DATABASE_URL || "";
 
 if (!DATABASE_URL) {
     throw new Error(
