@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useChatContext } from "../../../lib/contexts/chatContext";
 // import { createMessageAction } from "../../../server/actions/chat.action";
 import { useQueryClient } from "@tanstack/react-query";
+import { socket } from "@/lib/sockectClient";
 
 function SendChatMessage() {
     const [input, setInput] = useState("");
@@ -17,9 +18,21 @@ function SendChatMessage() {
         //     message: input,
         //     messageType: "text",
         // });
+        socket.emit(
+            "createMessage",
+            {
+                chatId: selectedChat.chatId,
+                message: input,
+                messageType: "text",
+            },
+            (data) => {
+                console.log("createMessage", data);
+            },
+        );
         setInput("");
         queryClient.invalidateQueries({ queryKey: ["messageList"] });
     };
+    if (!selectedChat.chatId) return <></>;
     return (
         <div
             className="flex h-[60px] items-center border-t bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40"

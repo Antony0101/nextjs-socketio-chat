@@ -8,10 +8,15 @@ import {
 } from "@/utils/hooks/socket";
 import { useEffect, useState } from "react";
 
-export default function SocketComponent() {
+type Props = {
+    children?: React.ReactNode;
+};
+
+export default function SocketComponent({ children }: Props) {
     useSocketConnect();
     const [usersOnline] = useUsersOnline();
     const { arrivalMessage } = useOnNewMessage();
+    console.log(arrivalMessage);
 
     useEffect(() => {
         function onConnect() {
@@ -30,4 +35,5 @@ export default function SocketComponent() {
             socket.off("disconnect", onDisconnect);
         };
     }, []);
+    return <>{children}</>;
 }

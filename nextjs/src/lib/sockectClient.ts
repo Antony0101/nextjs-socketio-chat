@@ -13,11 +13,14 @@ export type ServerToClientEvents = {
 };
 
 export type ClientToServerEvents = {
-    createMessage: (message: {
-        chatId: string;
-        message: string;
-        messageType: "text";
-    }) => void;
+    createMessage: (
+        message: {
+            chatId: string;
+            message: string;
+            messageType: "text";
+        },
+        fn: (data: any) => void,
+    ) => void;
 };
 
 export type NewMessage = {
