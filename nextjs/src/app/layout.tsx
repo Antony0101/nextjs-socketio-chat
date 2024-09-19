@@ -4,6 +4,7 @@ import "./styles.css";
 import { Toaster } from "../components/ui/toaster";
 import ReactQueryProvider from "../utils/Providers/ReactQueryProvider";
 import { UserContextProvider } from "../lib/contexts/userContext";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -23,6 +24,10 @@ export default function Layout({
         <html lang="en">
             <body className={inter.variable}>
                 <ReactQueryProvider>
+                    <ReactQueryDevtools
+                        initialIsOpen={false}
+                        position={"left"}
+                    />
                     <UserContextProvider>{children}</UserContextProvider>
                 </ReactQueryProvider>
                 <Toaster />
@@ -30,25 +35,3 @@ export default function Layout({
         </html>
     );
 }
-
-// This is the root layout component for your Next.js app.
-// Learn more: https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
-
-// import { Inter } from 'next/font/google'
-// import './styles.css'
-
-// const inter = Inter({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   variable: '--font-inter',
-// })
-
-// export default function Layout({ children }) {
-//   return (
-//     <html lang="en">
-//       <body className={inter.variable}>
-//         {children}
-//       </body>
-//     </html>
-//   )
-// }

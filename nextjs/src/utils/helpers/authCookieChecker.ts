@@ -23,7 +23,6 @@ const verifyCookie = async (
         console.log("error", e);
         return { authStatus: false, payload: null };
     }
-    console.log("payload", payload);
     return { authStatus: !!payload, payload: payload?.payload };
 };
 

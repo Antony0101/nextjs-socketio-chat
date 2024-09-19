@@ -25,10 +25,11 @@ export type ClientToServerEvents = {
 
 export type NewMessage = {
     chatId: string;
-    sender: string;
+    senderId: string;
     senderProfile: Profile;
     messageType: string;
     message: string;
+    seen: string[];
     createdAt: string;
     updatedAt: string;
     _id: string;
@@ -59,9 +60,7 @@ export type UserOnlineStatus = {
 let authToken = "";
 if (typeof document !== "undefined") {
     const cookie = document?.cookie;
-    console.log("cookie", cookie);
     authToken = cookie.split("auth=")[1].split(";")[0];
-    console.log("authToken", authToken);
 }
 
 export const socket: SocketInstance = io(

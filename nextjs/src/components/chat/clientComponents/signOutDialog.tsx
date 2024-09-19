@@ -42,7 +42,6 @@ export default function SignOutDialog({
                     <AlertDialogAction asChild>
                         <Button
                             onClick={async () => {
-                                console.log("sign out");
                                 await signOutAction();
                                 router.push("/");
                             }}

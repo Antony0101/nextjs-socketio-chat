@@ -6,10 +6,10 @@ import MessageModel, { MessageEntity } from "../models/message.model.js";
 const createMessage = async (
     chatId: string,
     userId: string,
-    message: { messageType: string; message: string },
+    message: { messageType: string; message: string }
 ): Promise<{
     message: MessageEntity & { senderProfile?: any };
-    room: string;
+    room: string[];
 }> => {
     const profile = await UserModel.findOne({ _id: userId });
     if (!profile) throw new Error("userId is invalid");
@@ -30,25 +30,28 @@ const createMessage = async (
                 lastMessage: messageDoc._id,
                 lastMessageAt: new Date(),
             },
-        },
+        }
     );
     const messageDocObj: MessageEntity & { senderProfile?: any } =
         messageDoc.toObject() as any;
     messageDocObj.senderProfile = profile;
     if (!chat) throw new Error("chatId is invalid");
-    let socketroom = `to-${chatId.toString()}`;
+    let socketroom = [`to-${chatId.toString()}`];
     if (chat.type === "private") {
         const index = chat.users.findIndex((obj) => {
             return obj.userId?.toString() !== userId.toString();
         });
-        socketroom = `to-${chat.users[index].userId?.toString()}`;
+        socketroom = [
+            `to-${chat.users[index].userId?.toString()}`,
+            `to-${chat.users[index === 0 ? 1 : 0].userId?.toString()}`,
+        ];
     }
     return { message: messageDocObj, room: socketroom };
 };
 
 const deleteMessage = async (
     messageId: string,
-    userId: string,
+    userId: string
 ): Promise<{ messageId: string; room: string }> => {
     const message = await MessageModel.findOne({ _id: messageId });
     if (!message) throw new Error("messageId is invalid");
@@ -60,7 +63,7 @@ const deleteMessage = async (
         const lastMessage = await MessageModel.findOne(
             { chatId: message.chatId },
             {},
-            { sort: { createdAt: -1 } },
+            { sort: { createdAt: -1 } }
         ).skip(1);
         if (lastMessage) {
             await ChatModel.findOneAndUpdate(
@@ -70,12 +73,12 @@ const deleteMessage = async (
                         lastMessage: lastMessage._id,
                         lastMessageAt: lastMessage.createdAt,
                     },
-                },
+                }
             );
         } else {
             await ChatModel.findOneAndUpdate(
                 { _id: message.chatId },
-                { $unset: { lastMessage: "", lastMessageAt: "" } },
+                { $unset: { lastMessage: "", lastMessageAt: "" } }
             );
         }
     }
@@ -97,7 +100,7 @@ const deleteMessage = async (
 
 const addMemberToGroup = async (
     chatId: Types.ObjectId,
-    userId: Types.ObjectId,
+    userId: Types.ObjectId
 ): Promise<{ room: string }> => {
     const chat = await ChatModel.findOne({ _id: chatId });
     if (!chat) throw new Error("chatId is invalid");
@@ -115,7 +118,7 @@ const addMemberToGroup = async (
 
 const removeMemberFromGroup = async (
     chatId: Types.ObjectId,
-    userId: Types.ObjectId,
+    userId: Types.ObjectId
 ) => {
     const chat = await ChatModel.findOne({ _id: chatId });
     if (!chat) throw new Error("chatId is invalid");
@@ -129,4 +132,9 @@ const removeMemberFromGroup = async (
     return { room: `to-${chat.users[index].userId?.toString()}` };
 };
 
-export { createMessage, deleteMessage, addMemberToGroup, removeMemberFromGroup };
+export {
+    createMessage,
+    deleteMessage,
+    addMemberToGroup,
+    removeMemberFromGroup,
+};

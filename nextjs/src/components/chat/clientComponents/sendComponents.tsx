@@ -35,7 +35,7 @@ function SendChatMessage() {
     if (!selectedChat.chatId) return <></>;
     return (
         <div
-            className="flex h-[60px] items-center border-t bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40"
+            className="flex  h-[60px] items-center border-t bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40"
             onKeyDown={(e) => {
                 if (e.key === "Enter") sendMessage();
             }}

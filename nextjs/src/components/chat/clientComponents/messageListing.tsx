@@ -2,7 +2,6 @@
 import { useChatContext } from "../../../lib/contexts/chatContext";
 import { useUserContext } from "../../../lib/contexts/userContext";
 import { useGetMessageList } from "../../../utils/hooks/queries";
-import { profile } from "console";
 import Image from "next/image";
 
 type MessageProps = {
@@ -63,7 +62,7 @@ export default function MessageListing() {
     const { data, isLoading } = useGetMessageList({
         chatId: selectedChat.chatId,
     });
-    const messages = data?.data?.messages || [];
+    const messages = data || [];
     return (
         <>
             {/* <SendMessage />

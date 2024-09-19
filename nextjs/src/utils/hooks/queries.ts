@@ -15,6 +15,7 @@ export const useGetUserList = () => {
             const data = await getUsers();
             return data;
         },
+        staleTime: 1000 * 60 * 5,
     });
 };
 
@@ -26,11 +27,12 @@ export const useGetUsersInGroup = ({
     type: "in" | "available" | "allExceptSelf";
 }) => {
     return useQuery({
-        queryKey: [`usersInGroup`, groupId, type],
+        queryKey: [`userList`, groupId, type],
         queryFn: async () => {
             const data = await getUsersInGroup(groupId, type);
             return data;
         },
+        staleTime: 1000 * 60 * 5,
     });
 };
 
@@ -41,6 +43,7 @@ export const useGetSelfDetails = () => {
             const data = await getUserDetails();
             return data;
         },
+        staleTime: 1000 * 60 * 5,
     });
 };
 
@@ -51,6 +54,7 @@ export const useGetChatList = () => {
             const data = await getChats();
             return data;
         },
+        staleTime: 1000 * 60 * 5,
     });
 };
 
@@ -71,8 +75,9 @@ export const useGetMessageList = ({ chatId }: { chatId: string }) => {
     return useQuery({
         queryKey: [`messageList`, chatId],
         queryFn: async () => {
-            const data = await getMessages(chatId);
+            const data = (await getMessages(chatId)).data?.messages;
             return data;
         },
+        staleTime: 1000 * 60 * 5,
     });
 };

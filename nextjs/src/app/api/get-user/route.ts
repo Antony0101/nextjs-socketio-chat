@@ -7,7 +7,6 @@ export async function GET(req: NextRequest) {
     await initAction();
     const headersList = headers();
     const token = headersList.get("authorization")?.split(" ")[1];
-    console.log(token);
     const payload = await verifyCookie({ value: token } as any);
     if (!payload.authStatus) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

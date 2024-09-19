@@ -102,7 +102,6 @@ const getAuthUser = async () => {
         if (!cookie.value) {
             throw new Error("unauthorized");
         }
-        console.log("cookie", cookie);
         const payload = await verifyJwt(cookie.value);
         return {
             success: true,

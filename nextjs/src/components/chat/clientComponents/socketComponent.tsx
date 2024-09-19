@@ -6,6 +6,7 @@ import {
     useSocketConnect,
     useUsersOnline,
 } from "@/utils/hooks/socket";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -15,8 +16,7 @@ type Props = {
 export default function SocketComponent({ children }: Props) {
     useSocketConnect();
     const [usersOnline] = useUsersOnline();
-    const { arrivalMessage } = useOnNewMessage();
-    console.log(arrivalMessage);
+    useOnNewMessage();
 
     useEffect(() => {
         function onConnect() {

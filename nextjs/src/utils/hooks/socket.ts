@@ -14,25 +14,45 @@ export const useSocketConnect = () => {
 };
 
 import { useUserContext } from "@/lib/contexts/userContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useOnNewMessage = () => {
-    const [arrivalMessage, setArrivalMessage] = useState<null | {
-        isMyMessage: boolean;
-        text: string;
-        time: string;
-        chatId: string;
-    }>(null);
-    const { user } = useUserContext();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const onNewMessage = (newMessage: NewMessage) => {
             console.log("[NEWMESSAGE EVENT]:", newMessage);
-            setArrivalMessage({
-                isMyMessage: newMessage.sender === user._id,
-                text: newMessage.message,
-                time: newMessage.createdAt,
+            const newMessageData = {
+                _id: newMessage._id,
                 chatId: newMessage.chatId,
+                message: newMessage.message,
+                messageType: newMessage.messageType,
+                senderId: newMessage.senderProfile,
+                seen: newMessage.seen,
+                createdAt: newMessage.createdAt,
+                updatedAt: newMessage.updatedAt,
+            };
+            console.log("[NEWMESSAGEDATA]:", newMessageData);
+
+            const queryCache = queryClient.getQueryCache();
+            const query = queryCache.find({
+                queryKey: ["messageList", newMessage.chatId],
             });
+            console.log(`query ${newMessage.chatId}: `, query?.options);
+            if (query) {
+                const messages = queryClient.getQueryData([
+                    "messageList",
+                    newMessage.chatId,
+                ]) as any[];
+                console.log("[MESSAGES]:", messages);
+                queryClient.setQueryData(
+                    ["messageList", newMessage.chatId],
+                    [newMessageData, ...messages],
+                );
+                // queryClient.invalidateQueries({
+                //     queryKey: ["messageList", newMessage.chatId],
+                // });
+            }
         };
         socket.on("newMessage", onNewMessage);
         return () => {
@@ -40,7 +60,7 @@ export const useOnNewMessage = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    return { arrivalMessage, setArrivalMessage };
+    // return { arrivalMessage, setArrivalMessage };
 };
 
 export const useOnOnlineStatusChange = () => {

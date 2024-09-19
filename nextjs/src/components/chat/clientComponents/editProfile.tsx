@@ -155,13 +155,6 @@ export function EditProfileDialog({
                                             </div>
                                         </DropdownMenuItem>
                                     ))}
-                                    {/* <DropdownMenuItem
-                                        onSelect={() =>
-                                            console.log("Take a photo")
-                                        }
-                                    >
-                                        Take a photo
-                                    </DropdownMenuItem> */}
                                 </DropdownMenuContent>
                             </DropdownMenu>
                             {errors.profilePicture && (

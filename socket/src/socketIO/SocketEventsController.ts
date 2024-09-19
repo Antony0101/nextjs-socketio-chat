@@ -1,13 +1,10 @@
 import { SocketInstance } from "./socketIOTypes.js";
-import {
-    createMessage,
-    deleteMessage,
-} from "./chat.internal.js";
+import { createMessage, deleteMessage } from "./chat.internal.js";
 
 const sendMessageEvent = async (
     socket: SocketInstance,
     data: any,
-    callback: any,
+    callback: any
 ) => {
     try {
         try {
@@ -20,9 +17,15 @@ const sendMessageEvent = async (
             const result = await createMessage(
                 chatId,
                 socket.data.session._id,
-                messageData,
+                messageData
             );
-            socket.to(result.room).emit("newMessage", result.message);
+            socket.broadcast
+                .to(result.room[0])
+                .emit("newMessage", result.message);
+            result.room[1] &&
+                socket.broadcast
+                    .to(result.room[1])
+                    .emit("newMessage", result.message);
 
             callback({
                 _id: result.message._id,
@@ -40,10 +43,39 @@ const sendMessageEvent = async (
     }
 };
 
+// // sending to sender-client only
+// socket.emit('message', "this is a test");
+
+// // sending to all clients, include sender
+// io.emit('message', "this is a test");
+
+// // sending to all clients except sender
+// socket.broadcast.emit('message', "this is a test");
+
+// // sending to all clients in 'game' room(channel) except sender
+// socket.broadcast.to('game').emit('message', 'nice game');
+
+// // sending to all clients in 'game' room(channel), include sender
+// io.in('game').emit('message', 'cool game');
+
+// // sending to sender client, only if they are in 'game' room(channel)
+// socket.to('game').emit('message', 'enjoy the game');
+
+// // sending to all clients in namespace 'myNamespace', include sender
+// io.of('myNamespace').emit('message', 'gg');
+
+// // sending to individual socketid
+// socket.broadcast.to(socketid).emit('message', 'for your eyes only');
+
+// // list socketid
+// for (var socketid in io.sockets.sockets) {}
+//  OR
+// Object.keys(io.sockets.sockets).forEach((socketid) => {});
+
 const deleteMessageEvent = async (
     socket: SocketInstance,
     data: any,
-    callback: any,
+    callback: any
 ) => {
     try {
         const messageId = data.messageId as string;
