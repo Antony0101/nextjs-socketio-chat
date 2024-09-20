@@ -18,11 +18,14 @@ const setupWss = (httpServer: http.Server) => {
         try {
             const token =
                 socket.handshake.auth.token || socket.handshake.headers.token;
-            const res = await axios.get("http://localhost:3000/api/get-user", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const res = await axios.get(
+                `${process.env.NEXTJS_URL}/api/get-user`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             socket.data.session = res.data.user;
             next();
         } catch (err: any) {
