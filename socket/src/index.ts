@@ -1,4 +1,4 @@
-import "./loadEnv.js"
+import "./loadEnv.js";
 import { createServer } from "node:http";
 // import mongoose from "mongoose";
 import connectDB from "./connectDb.js";
@@ -6,7 +6,9 @@ import setupWss from "./socketIO/socketIO.js";
 
 const port = process.env.PORT || 3000;
 connectDB();
-const httpServer = createServer();
+const httpServer = createServer((req, res) => {
+    res.end("Socket server is running");
+});
 setupWss(httpServer);
 
 httpServer
