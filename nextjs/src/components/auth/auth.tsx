@@ -5,7 +5,7 @@ import Login from "./login";
 import SignUp from "./signup";
 
 export default function Auth() {
-    const [signIn, setSignIn] = useState(true);
+    const [signIn, setSignIn] = useState(false);
     const setSignInFunction = (state: boolean) => {
         setSignIn(state);
     };

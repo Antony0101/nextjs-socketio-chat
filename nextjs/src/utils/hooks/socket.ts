@@ -93,3 +93,28 @@ export const useUsersOnline = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };
+
+export const useMemberAddedToGroup = () => {
+    const queryClient = useQueryClient();
+    useEffect(() => {
+        socket.on("memberAdded", (data: { chatId: string; userId: string }) => {
+            console.log("[ADD MEMBER TO GROUP]:", data);
+            queryClient.invalidateQueries({ queryKey: ["chatList"] });
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+};
+
+export const useMemberRemovedFromGroup = () => {
+    const queryClient = useQueryClient();
+    useEffect(() => {
+        socket.on(
+            "memberRemoved",
+            (data: { chatId: string; userId: string }) => {
+                console.log("[REMOVE MEMBER FROM GROUP]:", data);
+                queryClient.invalidateQueries({ queryKey: ["chatList"] });
+            },
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+};

@@ -1,5 +1,10 @@
 import { SocketInstance } from "./socketIOTypes.js";
-import { createMessage, deleteMessage } from "./chat.internal.js";
+import {
+    createMessage,
+    deleteMessage,
+    addMemberToGroup,
+    removeMemberFromGroup,
+} from "./chat.internal.js";
 
 const sendMessageEvent = async (
     socket: SocketInstance,
@@ -82,16 +87,85 @@ const deleteMessageEvent = async (
         const userId = data.userId as string;
         const result = await deleteMessage(messageId, userId);
         socket.to(result.room).emit("messageDeleted", result.messageId);
-
-        callback({
-            _id: result.messageId,
-        });
+        if (callback) {
+            callback({
+                _id: result.messageId,
+            });
+        }
     } catch (err: any) {
         console.log(err);
-        return callback(null, err);
+        if (callback) {
+            return callback(null, err);
+        }
     }
 };
 
-const SocketEventsController = { sendMessageEvent, deleteMessageEvent };
+const addMemberEvent = async (
+    socket: SocketInstance,
+    data: any,
+    callback: any
+) => {
+    try {
+        const { chatId, userIds } = data as {
+            chatId: string;
+            userIds: string[];
+        };
+        const result = await addMemberToGroup(chatId, userIds);
+        result.rooms.forEach((room) => {
+            socket
+                .to(room)
+                .emit("memberAdded", { chatId, userId: room.split("-")[1] });
+        });
+
+        if (callback) {
+            callback({
+                userIds,
+                chatId,
+            });
+        }
+    } catch (err: any) {
+        console.log(err);
+        if (callback) {
+            return callback(null, err);
+        }
+    }
+};
+
+const removeMemberEvent = async (
+    socket: SocketInstance,
+    data: any,
+    callback: any
+) => {
+    try {
+        const { chatId, userIds } = data as {
+            chatId: string;
+            userIds: string[];
+        };
+        const result = await removeMemberFromGroup(chatId, userIds);
+        result.rooms.forEach((room) => {
+            const userId = room.split("-")[1];
+            socket.to(room).emit("memberRemoved", { chatId, userId });
+        });
+
+        if (callback) {
+            callback({
+                userIds,
+                chatId,
+            });
+        }
+    } catch (err: any) {
+        console.log(err);
+        if (callback) {
+            return callback(null, err);
+        }
+    }
+};
+
+const SocketEventsController = {
+    sendMessageEvent,
+    deleteMessageEvent,
+    addMemberEvent,
+    removeMemberEvent,
+};
 
 export default SocketEventsController;

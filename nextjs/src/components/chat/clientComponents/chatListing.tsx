@@ -59,6 +59,7 @@ export default function ChatListing() {
                             }
                             isSelected={selectedChat.chatId === chat._id}
                             setSelectedChat={setSelectedChat}
+                            users={chat.users}
                         />
                     ))}
             </div>

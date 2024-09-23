@@ -84,6 +84,15 @@ const setupWss = (httpServer: http.Server) => {
         ws.on("deleteMessage", (data, callback) =>
             SocketEventsController.deleteMessageEvent(ws, data, callback)
         );
+
+        ws.on("addMember", (data, callback) =>
+            SocketEventsController.addMemberEvent(ws, data, callback)
+        );
+
+        ws.on("removeMember", (data, callback) =>
+            SocketEventsController.removeMemberEvent(ws, data, callback)
+        );
+
         // ws.on(wsEvents.USER_SAW_MESSAGES, (data, callback) => updateLastSeen(ws, data, callback))
         // ws.on(wsEvents.USER_TYPING, (data, callback) => sendTypingIndicator(ws, data, callback))
         // ws.on(wsEvents.CREATE_BROADCAST_MESSAGE, (data, callback) => createBroadcastMessage(ws, data, callback))

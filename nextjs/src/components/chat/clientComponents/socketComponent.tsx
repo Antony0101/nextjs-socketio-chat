@@ -2,6 +2,8 @@
 
 import { socket } from "@/lib/sockectClient";
 import {
+    useMemberAddedToGroup,
+    useMemberRemovedFromGroup,
     useOnNewMessage,
     useOnOnlineStatusChange,
     useSocketConnect,
@@ -19,6 +21,8 @@ export default function SocketComponent({ children }: Props) {
     useOnOnlineStatusChange();
     useUsersOnline();
     useOnNewMessage();
+    useMemberAddedToGroup();
+    useMemberRemovedFromGroup();
 
     useEffect(() => {
         function onConnect() {

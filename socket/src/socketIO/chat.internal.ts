@@ -99,37 +99,47 @@ const deleteMessage = async (
 };
 
 const addMemberToGroup = async (
-    chatId: Types.ObjectId,
-    userId: Types.ObjectId
-): Promise<{ room: string }> => {
+    chatId: string,
+    userIds: string[]
+): Promise<{ rooms: string[] }> => {
     const chat = await ChatModel.findOne({ _id: chatId });
     if (!chat) throw new Error("chatId is invalid");
     if (chat.type !== "group") throw new Error("chat is not a group chat");
-    const index = chat.users.findIndex((obj) => {
-        return obj.userId?.toString() === userId.toString();
-    });
-    if (index !== -1) throw new Error("user is already a member of this group");
-    const profile = await UserModel.findOne({ _id: userId });
-    if (!profile) throw new Error("userId is invalid");
-    chat.users.push({ unread: 0, userId: profile._id });
+    for (const userId of userIds) {
+        const index = chat.users.findIndex((obj) => {
+            return obj.userId?.toString() === userId.toString();
+        });
+        if (index !== -1)
+            throw new Error("user is already a member of this group");
+        const profile = await UserModel.findOne({ _id: userId });
+        if (!profile) throw new Error("userId is invalid");
+        chat.users.push({ unread: 0, userId: profile._id });
+    }
     await chat.save();
-    return { room: `to-${chat.users[index].userId?.toString()}` };
+    const rooms = userIds.map((userId) => {
+        return `to-${userId.toString()}`;
+    });
+    return { rooms };
+    // return { room: `to-${chat.users[index].userId?.toString()}` };
 };
 
-const removeMemberFromGroup = async (
-    chatId: Types.ObjectId,
-    userId: Types.ObjectId
-) => {
+const removeMemberFromGroup = async (chatId: string, userIds: string[]) => {
     const chat = await ChatModel.findOne({ _id: chatId });
     if (!chat) throw new Error("chatId is invalid");
     if (chat.type !== "group") throw new Error("chat is not a group chat");
-    const index = chat.users.findIndex((obj) => {
-        return obj.userId?.toString() === userId.toString();
+    userIds.forEach((userId) => {
+        const index = chat.users.findIndex((obj) => {
+            return obj.userId?.toString() === userId.toString();
+        });
+        if (index === -1) throw new Error("user is not a member of this group");
+        chat.users.splice(index, 1);
     });
-    if (index === -1) throw new Error("user is not a member of this group");
-    chat.users.splice(index, 1);
     await chat.save();
-    return { room: `to-${chat.users[index].userId?.toString()}` };
+    const rooms = userIds.map((userId) => {
+        return `to-${userId.toString()}`;
+    });
+    return { rooms };
+    // return { rooms: `to-${chat.users[index].userId?.toString()}` };
 };
 
 export {

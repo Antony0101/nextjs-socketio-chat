@@ -10,6 +10,7 @@ type Props = {
     lastMessage?: string | null;
     isOnline: boolean;
     isSelected: boolean;
+    users: any[];
     setSelectedChat: React.Dispatch<
         React.SetStateAction<{
             chatId: string;
@@ -18,6 +19,7 @@ type Props = {
             userId: string;
             isOnline: boolean;
             lastSeen: string;
+            users: any[];
         }>
     >;
 };
@@ -32,6 +34,7 @@ export default function ChatCard({
     userId,
     isSelected,
     setSelectedChat,
+    users,
 }: Props) {
     return (
         <div
@@ -44,6 +47,7 @@ export default function ChatCard({
                     isOnline,
                     userId,
                     lastSeen: lastMessageTime?.toString() || "",
+                    users,
                 })
             }
         >

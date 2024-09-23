@@ -10,6 +10,8 @@ export type ServerToClientEvents = {
     userStatusChange: (data: any) => void;
     // TODO: setup type for data
     newMessage: (message: NewMessage) => void;
+    memberAdded: (data: any) => void;
+    memberRemoved: (data: any) => void;
 };
 
 export type ClientToServerEvents = {
@@ -18,6 +20,20 @@ export type ClientToServerEvents = {
             chatId: string;
             message: string;
             messageType: "text";
+        },
+        fn: (data: any) => void,
+    ) => void;
+    addMember: (
+        data: {
+            chatId: string;
+            userIds: string[];
+        },
+        fn: (data: any) => void,
+    ) => void;
+    removeMember: (
+        data: {
+            chatId: string;
+            userIds: string[];
         },
         fn: (data: any) => void,
     ) => void;
