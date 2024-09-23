@@ -1,5 +1,3 @@
-import { Input } from "../ui/input";
-import SearchIcon from "../icons/searchIcon";
 import AddChatButton from "./clientComponents/addChatButton";
 import ChatListing from "./clientComponents/chatListing";
 import UserMenu from "./clientComponents/userMenu";
@@ -20,19 +18,7 @@ export default async function ChatSideBar({ userId }: Props) {
                     <UserMenu />
                 </div>
             </div>
-            <div className="flex-1 overflow-auto">
-                <div className="p-4">
-                    <div className="relative">
-                        <SearchIcon className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                        <Input
-                            className="w-full rounded-md bg-white px-8 py-2 shadow-sm dark:bg-gray-950"
-                            placeholder="Search chats..."
-                            type="search"
-                        />
-                    </div>
-                </div>
-                <ChatListing />
-            </div>
+            <ChatListing />
         </div>
     );
 }
