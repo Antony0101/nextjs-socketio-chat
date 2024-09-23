@@ -3,6 +3,7 @@
 import { socket } from "@/lib/sockectClient";
 import {
     useOnNewMessage,
+    useOnOnlineStatusChange,
     useSocketConnect,
     useUsersOnline,
 } from "@/utils/hooks/socket";
@@ -15,7 +16,8 @@ type Props = {
 
 export default function SocketComponent({ children }: Props) {
     useSocketConnect();
-    const [usersOnline] = useUsersOnline();
+    useOnOnlineStatusChange();
+    useUsersOnline();
     useOnNewMessage();
 
     useEffect(() => {

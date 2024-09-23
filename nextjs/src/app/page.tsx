@@ -13,20 +13,6 @@ export default async function Home() {
                     <TextIcon className="w-6 h-6" />
                     <span>Chat App</span>
                 </Link>
-                {/* <nav className="flex gap-4 sm:gap-6">
-                    <Link
-                        className="text-sm font-medium hover:underline"
-                        href="#"
-                    >
-                        Login
-                    </Link>
-                    <Link
-                        className="text-sm font-medium hover:underline"
-                        href="#"
-                    >
-                        Sign Up
-                    </Link>
-                </nav> */}
             </header>
             <main className="flex-1 flex items-center justify-center px-4 md:px-6">
                 <div className="max-w-md w-full space-y-6">

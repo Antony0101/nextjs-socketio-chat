@@ -106,7 +106,11 @@ const getChats = actionWrapper(
                 icon?: string;
                 name?: string;
                 users: {
-                    userId: { profilePicture: string; name: string };
+                    userId: {
+                        profilePicture: string;
+                        name: string;
+                        _id: string;
+                    };
                 }[];
             } = chat as any;
             chat.users = chat.users
@@ -120,6 +124,7 @@ const getChats = actionWrapper(
                         userId: {
                             profilePicture: user.userId.profilePicture,
                             name: user.userId.name,
+                            _id: user.userId._id,
                         },
                     };
                 });

@@ -13,8 +13,8 @@ export const useSocketConnect = () => {
     }, []);
 };
 
-import { useUserContext } from "@/lib/contexts/userContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUserOnlineContext } from "@/lib/contexts/chatOnlineContext";
 
 export const useOnNewMessage = () => {
     const queryClient = useQueryClient();
@@ -49,6 +49,9 @@ export const useOnNewMessage = () => {
                     ["messageList", newMessage.chatId],
                     [newMessageData, ...messages],
                 );
+                queryClient.invalidateQueries({
+                    queryKey: ["chatList"],
+                });
                 // queryClient.invalidateQueries({
                 //     queryKey: ["messageList", newMessage.chatId],
                 // });
@@ -60,55 +63,33 @@ export const useOnNewMessage = () => {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    // return { arrivalMessage, setArrivalMessage };
 };
 
 export const useOnOnlineStatusChange = () => {
-    const [userOnlineStatus, setUserOnlineStatus] = useState<
-        {} | UserOnlineStatus
-    >({});
-
+    const { setOnlineUsers } = useUserOnlineContext();
     useEffect(() => {
         socket.on("userStatusChange", (data: UserOnlineStatus) => {
-            console.log(data);
-            setUserOnlineStatus(data);
+            const { status, userId } = data;
+            setOnlineUsers((prev) => {
+                if (status === "online") {
+                    const temp = prev.filter((id) => id !== userId);
+                    return [...temp, userId];
+                } else {
+                    return prev.filter((id) => id !== userId);
+                }
+            });
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    console.log("[USERONLINESTATUSCHANGE:]", userOnlineStatus);
-
-    return [userOnlineStatus];
-};
-
-const isUserOnlineStatus = (obj: any): obj is UserOnlineStatus => {
-    return obj?.status && obj.userId;
 };
 
 export const useUsersOnline = () => {
-    const [usersOnline, setUsersOnline] = useState<string[]>([""]);
-    const [userOnlineStatus] = useOnOnlineStatusChange();
-
+    const { setOnlineUsers } = useUserOnlineContext();
     //   set default online users on initial socket connection
     useEffect(() => {
         socket.on("usersOnline", (data) => {
-            setUsersOnline(data);
+            setOnlineUsers(data);
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        if (isUserOnlineStatus(userOnlineStatus)) {
-            if (userOnlineStatus.status === "online") {
-                setUsersOnline((prev) => {
-                    return [...prev, userOnlineStatus.userId];
-                });
-            }
-            if (userOnlineStatus.status === "offline") {
-                setUsersOnline((prev) => {
-                    return prev.filter((id) => id !== userOnlineStatus.userId);
-                });
-            }
-        }
-    }, [userOnlineStatus]);
-
-    console.log(usersOnline);
-    return [usersOnline];
 };

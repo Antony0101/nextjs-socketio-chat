@@ -7,6 +7,7 @@ type ChatContextType = {
         chatId: string;
         chatName: string;
         profilePicture: string;
+        userId: string;
         isOnline: boolean;
         lastSeen: string;
     };
@@ -15,6 +16,7 @@ type ChatContextType = {
             chatId: string;
             chatName: string;
             profilePicture: string;
+            userId: string;
             isOnline: boolean;
             lastSeen: string;
         }>
@@ -32,6 +34,7 @@ export function ChatIdContextProvider({
         chatId: "",
         chatName: "",
         profilePicture: "",
+        userId: "",
         isOnline: false,
         lastSeen: "",
     });

@@ -19,7 +19,10 @@ import {
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { useToast } from "../../ui/use-toast";
-import { useGetSelfDetails, useGetUsersInGroup } from "../../../utils/hooks/queries";
+import {
+    useGetSelfDetails,
+    useGetUsersInGroup,
+} from "../../../utils/hooks/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -31,6 +34,7 @@ import { MultiSelect } from "../../ui/multiselect";
 import { useUserContext } from "../../../lib/contexts/userContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { set } from "mongoose";
+import { Users } from "lucide-react";
 
 const CreateGroupSchema = z.object({
     name: z.string().min(3),
@@ -109,7 +113,7 @@ export function AddGroupDialog() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button size="icon" variant="ghost">
-                    <AddGroupIcon className="h-7 w-10" />
+                    <Users className="h-5 w-5" />
                     <span className="sr-only">New Group</span>
                 </Button>
             </DialogTrigger>

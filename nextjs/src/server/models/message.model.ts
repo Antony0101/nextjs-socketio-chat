@@ -41,6 +41,8 @@ const MessageSchema = new mongoose.Schema(
     },
 );
 
+MessageSchema.index({ createdAt: 1, chatId: 1 });
+
 const dummyModel = (false as true) && mongoose.model("messages", MessageSchema);
 
 export type MessageModelType = typeof dummyModel;

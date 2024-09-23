@@ -13,7 +13,7 @@ export default async function ChatArea() {
                     <MessageListing />
                 </div>
             </div>
-            <div className="absolute z-50 bottom-0 left-0 right-0">
+            <div className="absolute bottom-0 left-0 right-0">
                 <SendChatMessage />
             </div>
         </div>

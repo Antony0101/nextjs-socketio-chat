@@ -16,6 +16,7 @@ import { EditProfileDialog } from "./editProfile";
 import { DialogTrigger } from "../../ui/dialog";
 import { boolean } from "zod";
 import SignOutDialog from "./signOutDialog";
+import { UserCog } from "lucide-react";
 
 export default function UserMenu() {
     const [openEditProfile, setOpenEditProfile] = useState(false);
@@ -25,7 +26,8 @@ export default function UserMenu() {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="ghost">
-                        <UserIcon className="h-5 w-5" />
+                        {/* <UserIcon className="h-5 w-5" /> */}
+                        <UserCog className="h-5 w-5" />
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

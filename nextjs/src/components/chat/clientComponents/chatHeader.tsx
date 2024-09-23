@@ -1,9 +1,13 @@
 "use client";
+import { useUserOnlineContext } from "@/lib/contexts/chatOnlineContext";
 import { useChatContext } from "../../../lib/contexts/chatContext";
 import Image from "next/image";
 
 export default function ChatHeader() {
     const { selectedChat } = useChatContext();
+    const { onlineUsers } = useUserOnlineContext();
+    console.log("Online Users: ", onlineUsers);
+    // console.log("Online True: ", onlineUsers.includes(selectedChat));
     if (!selectedChat.chatId) return <></>;
     return (
         <div className="flex h-[60px] items-center border-b bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40">
@@ -26,7 +30,9 @@ export default function ChatHeader() {
                 <div>
                     <h4 className="font-medium">{selectedChat.chatName}</h4>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Online
+                        {onlineUsers.includes(selectedChat.userId)
+                            ? "Online"
+                            : ""}
                     </p>
                 </div>
             </div>

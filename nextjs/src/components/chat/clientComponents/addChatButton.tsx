@@ -16,6 +16,7 @@ import {
     useCreatePrivateChat,
     useGetUserList,
 } from "../../../utils/hooks/queries";
+import { User } from "lucide-react";
 
 type Props = {
     userId: string;
@@ -41,7 +42,7 @@ export default function AddChatButton({ userId }: Props) {
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button size="icon" variant="ghost">
-                    <AddUserIcon className="h-7 w-10" />
+                    <User className="h-5 w-5" />
                     <span className="sr-only">New Group</span>
                 </Button>
             </PopoverTrigger>

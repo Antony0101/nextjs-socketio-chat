@@ -4,6 +4,7 @@ import Link from "next/link";
 type Props = {
     chatId: string;
     name: string;
+    userId: string;
     lastMessageTime?: Date | null;
     profilePicture: string;
     lastMessage?: string | null;
@@ -14,6 +15,7 @@ type Props = {
             chatId: string;
             chatName: string;
             profilePicture: string;
+            userId: string;
             isOnline: boolean;
             lastSeen: string;
         }>
@@ -27,6 +29,7 @@ export default function ChatCard({
     profilePicture,
     lastMessage,
     isOnline,
+    userId,
     isSelected,
     setSelectedChat,
 }: Props) {
@@ -39,6 +42,7 @@ export default function ChatCard({
                     chatName: name,
                     profilePicture,
                     isOnline,
+                    userId,
                     lastSeen: lastMessageTime?.toString() || "",
                 })
             }

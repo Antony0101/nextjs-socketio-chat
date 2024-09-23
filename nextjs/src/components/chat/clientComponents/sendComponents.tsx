@@ -26,11 +26,12 @@ function SendChatMessage() {
                 messageType: "text",
             },
             (data) => {
-                console.log("createMessage", data);
+                queryClient.invalidateQueries({ queryKey: ["messageList"] });
             },
         );
         setInput("");
         queryClient.invalidateQueries({ queryKey: ["messageList"] });
+        queryClient.invalidateQueries({ queryKey: ["chatList"] });
     };
     if (!selectedChat.chatId) return <></>;
     return (
