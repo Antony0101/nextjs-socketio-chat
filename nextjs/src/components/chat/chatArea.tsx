@@ -5,7 +5,7 @@ import SocketComponent from "./clientComponents/socketComponent";
 
 export default async function ChatArea() {
     return (
-        <div className="flex flex-col relative">
+        <div className="hidden lg:flex flex-col relative">
             <SocketComponent />
             <ChatHeader />
             <div className="flex-1 overflow-auto max-h-[90vh] p-4">
