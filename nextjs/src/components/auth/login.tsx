@@ -16,6 +16,9 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "../../lib/contexts/userContext";
+import { useState } from "react";
+import Image from "next/image";
+import spinner from "@/assests/spinner.svg";
 
 const SignupSchema = z.object({
     username: z.string(),
@@ -31,6 +34,7 @@ type Props = {
 export default function Login({ setSignInFunction }: Props) {
     const { setUser } = useUserContext();
     const router = useRouter();
+    const [loginLoading, setLoginLoading] = useState(false);
     const { toast } = useToast();
     const {
         register,
@@ -40,6 +44,7 @@ export default function Login({ setSignInFunction }: Props) {
     } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignupSchema) });
 
     const onSubmit: SubmitHandler<SignUpSchemaType> = async (formdata) => {
+        setLoginLoading(true);
         try {
             const { success, data, message } = await loginAction(formdata);
             if (!success) {
@@ -56,11 +61,13 @@ export default function Login({ setSignInFunction }: Props) {
                 });
                 router.push("/chat");
             }
+            setLoginLoading(false);
         } catch (e: any) {
             toast({
                 variant: "destructive",
                 description: e.message,
             });
+            setLoginLoading(false);
             console.log(e);
         }
     };
@@ -120,9 +127,18 @@ export default function Login({ setSignInFunction }: Props) {
                     <CardFooter>
                         <Button
                             className="w-full bg-[#6366F1] hover:bg-[#4F46E5] text-white"
+                            disabled={loginLoading}
                             type="submit"
                         >
-                            Login
+                            {loginLoading ? (
+                                <Image
+                                    src={spinner}
+                                    alt="loading icon"
+                                    className="w-8 h-7"
+                                />
+                            ) : (
+                                "Login"
+                            )}
                         </Button>
                     </CardFooter>
                 </Card>
@@ -132,6 +148,7 @@ export default function Login({ setSignInFunction }: Props) {
                 <button
                     className="font-medium underline"
                     onClick={() => setSignInFunction(false)}
+                    disabled={loginLoading}
                 >
                     Sign up
                 </button>

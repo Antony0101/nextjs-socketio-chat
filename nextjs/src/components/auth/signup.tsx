@@ -16,6 +16,9 @@ import { useToast } from "../ui/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "../../lib/contexts/userContext";
+import Image from "next/image";
+import spinner from "@/assests/spinner.svg";
+import { useState } from "react";
 
 type Props = {
     setSignInFunction: (a: boolean) => void;
@@ -31,6 +34,7 @@ const SignupSchema = z.object({
 type SignUpSchemaType = z.infer<typeof SignupSchema>;
 
 export default function SignUp({ setSignInFunction }: Props) {
+    const [loading, setLoading] = useState(false);
     const { setUser } = useUserContext();
     const router = useRouter();
     const { toast } = useToast();
@@ -42,6 +46,7 @@ export default function SignUp({ setSignInFunction }: Props) {
     } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignupSchema) });
 
     const onSubmit: SubmitHandler<SignUpSchemaType> = async (formData) => {
+        setLoading(true);
         try {
             const { success, data, message } = await signUpAction(formData);
             if (!success) {
@@ -58,11 +63,13 @@ export default function SignUp({ setSignInFunction }: Props) {
                 });
                 router.push("/chat");
             }
+            setLoading(false);
         } catch (e: any) {
             toast({
                 variant: "destructive",
                 description: e.message,
             });
+            setLoading(false);
             console.log(e);
         }
     };
@@ -160,8 +167,17 @@ export default function SignUp({ setSignInFunction }: Props) {
                         <Button
                             className="w-full bg-[#6366F1] hover:bg-[#4F46E5] text-white"
                             type="submit"
+                            disabled={loading}
                         >
-                            Sign up
+                            {loading ? (
+                                <Image
+                                    src={spinner}
+                                    alt="loading icon"
+                                    className="w-8 h-7"
+                                />
+                            ) : (
+                                "Sign up"
+                            )}
                         </Button>
                     </CardFooter>
                 </Card>
@@ -171,6 +187,7 @@ export default function SignUp({ setSignInFunction }: Props) {
                 <button
                     className="font-medium underline"
                     onClick={() => setSignInFunction(true)}
+                    disabled={loading}
                 >
                     Sign in
                 </button>
