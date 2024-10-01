@@ -16,6 +16,7 @@ import { useGetUsersInGroup } from "@/utils/hooks/queries";
 import { useEffect, useState } from "react";
 import { socket } from "@/lib/sockectClient";
 import { useQueryClient } from "@tanstack/react-query";
+import { ChevronLeft } from "lucide-react";
 
 function arraysEqual(a: any[], b: any[]) {
     a.sort();
@@ -34,7 +35,7 @@ function arraysEqual(a: any[], b: any[]) {
 
 export default function ChatHeader() {
     const queryClient = useQueryClient();
-    const { selectedChat } = useChatContext();
+    const { selectedChat, setSelectedChat } = useChatContext();
     const { onlineUsers } = useUserOnlineContext();
     const [groupUsers, setGroupUsers] = useState<string[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -100,7 +101,27 @@ export default function ChatHeader() {
         setDialogOpen(false);
     };
     return (
-        <div className="flex h-[60px] items-center border-b bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40 w-full py-4">
+        <div className="flex h-[60px] items-center border-b bg-gray-100/40 px-4 dark:border-gray-800 dark:bg-gray-800/40 w-full">
+            <div className="md:hidden pr-5">
+                <Button
+                    size="icon"
+                    variant="ghost"
+                    className="border"
+                    onClick={() =>
+                        setSelectedChat({
+                            chatId: "",
+                            chatName: "",
+                            profilePicture: "",
+                            userId: "",
+                            isOnline: false,
+                            lastSeen: "",
+                            users: [],
+                        })
+                    }
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
+            </div>
             <div className="flex items-center gap-4">
                 <Image
                     alt="Avatar"
