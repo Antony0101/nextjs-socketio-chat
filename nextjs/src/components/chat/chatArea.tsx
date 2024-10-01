@@ -5,11 +5,11 @@ import SocketComponent from "./clientComponents/socketComponent";
 
 export default async function ChatArea() {
     return (
-        <div className="hidden lg:flex flex-col relative">
+        <div className="hidden md:flex md:flex-col w-full md:relative bg-white">
             <SocketComponent />
             <ChatHeader />
-            <div className="flex-1 overflow-auto max-h-[90vh] p-4">
-                <div className="grid gap-4">
+            <div className="flex justify-between overflow-auto max-h-[90vh] p-4 w-full">
+                <div className="flex flex-col gap-4 w-full">
                     <MessageListing />
                 </div>
             </div>

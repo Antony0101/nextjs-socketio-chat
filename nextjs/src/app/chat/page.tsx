@@ -16,7 +16,8 @@ export default async function ChatPage() {
         <ChatIdContextProvider>
             <UserOnlineContextProvider>
                 <SetUserContextComponent />
-                <div className="grid h-screen w-full grid-cols-[300px_1fr] overflow-hidden">
+                {/* <div className="grid h-screen w-full grid-cols-[300px_1fr] overflow-hidden"> */}
+                <div className="h-screen w-full flex justify-between overflow-hidden relative">
                     <ChatSideBar userId={data.uid} />
                     <ChatArea />
                 </div>
