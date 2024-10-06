@@ -6,6 +6,9 @@ import ChatCard from "./chatCard";
 import { useChatContext } from "../../../lib/contexts/chatContext";
 import { useUserOnlineContext } from "@/lib/contexts/chatOnlineContext";
 import { useState } from "react";
+import Image from "next/image";
+import spinner from "@/assests/spinner.svg";
+import LoaderComponent from "@/components/svg/loaderComponents";
 
 export default function ChatListing() {
     const { data, isLoading } = useGetChatList();
@@ -14,7 +17,16 @@ export default function ChatListing() {
     const { onlineUsers } = useUserOnlineContext();
     const [searchValue, setSearchValue] = useState("");
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading)
+        return (
+            <div className="flex justify-center items-center h-[90vh] w-full">
+                {"Loading "}
+                <LoaderComponent
+                    fill="rgba(0, 0, 0, 0.976)"
+                    className="h-8 w-8"
+                />
+            </div>
+        );
     return (
         <div className="flex-1 overflow-auto">
             <div className="p-4">

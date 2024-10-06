@@ -1,4 +1,5 @@
 "use client";
+import LoaderComponent from "@/components/svg/loaderComponents";
 import { useChatContext } from "../../../lib/contexts/chatContext";
 import { useUserContext } from "../../../lib/contexts/userContext";
 import { useGetMessageList } from "../../../utils/hooks/queries";
@@ -63,6 +64,16 @@ export default function MessageListing() {
         chatId: selectedChat.chatId,
     });
     const messages = data || [];
+    if (isLoading)
+        return (
+            <div className="flex justify-center items-center h-[90vh] w-full">
+                {"Loading "}
+                <LoaderComponent
+                    fill="rgba(0, 0, 0, 0.976)"
+                    className="h-8 w-8"
+                />
+            </div>
+        );
     return (
         <>
             {/* <SendMessage />

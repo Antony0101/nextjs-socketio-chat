@@ -11,7 +11,7 @@ export default function ChatArea() {
         <div
             className={`${selectedChat.chatId ? "" : "hidden"} absolute md:block md:static w-full z-20`}
         >
-            <div className="flex flex-col w-full relative bg-white">
+            <div className="flex flex-col w-full relative bg-white opacity-100">
                 <SocketComponent />
                 <ChatHeader />
                 <div className="flex justify-between overflow-auto max-h-[90vh] p-4 w-full h-[90vh]">
